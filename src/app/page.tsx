@@ -20,6 +20,7 @@ import { cn } from "@/utils/cn";
 import { ResumeModal } from "@/components/common/ResumeModal";
 // Load SplashCursor dynamically (browser-only WebGL)
 const SplashCursor = dynamic(() => import("@/components/ui/SplashCursor"), { ssr: false });
+const SmoothCursor = dynamic(() => import("@/registry/magicui/smooth-cursor").then(mod => mod.SmoothCursor), { ssr: false });
 
 // Load Lightfall dynamically (browser-only WebGL)
 const Lightfall = dynamic(() => import("@/components/common/Lightfall"), { ssr: false });
@@ -64,8 +65,13 @@ export default function Home() {
 
   return (
     <>
-      {/* Premium WebGL Fluid Splash Cursor — visible from start including intro */}
-      <SplashCursor />
+      {/* Premium WebGL Fluid Splash Cursor & Smooth Cursor — only active after intro is complete */}
+      {isIntroComplete && (
+        <>
+          <SplashCursor />
+          <SmoothCursor />
+        </>
+      )}
 
       {/* Intro experience */}
       {!isIntroComplete && (
