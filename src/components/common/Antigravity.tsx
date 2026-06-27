@@ -242,7 +242,16 @@ const AntigravityInner = ({
 
 export default function Antigravity(props: AntigravityProps) {
   return (
-    <Canvas camera={{ position: [0, 0, 50], fov: 35 }}>
+    <Canvas
+      camera={{ position: [0, 0, 50], fov: 35 }}
+      dpr={1}
+      gl={{
+        powerPreference: "high-performance",
+        antialias: false,
+        stencil: false,
+        depth: false
+      }}
+    >
       <AntigravityInner {...props} />
     </Canvas>
   );

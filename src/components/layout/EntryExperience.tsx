@@ -352,16 +352,17 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
         if (curStatus === "triggering") {
           targetOp = 0.65;
         } else if (mouse.active) {
-          let minDist = 999999;
+          let minDistSq = 99999999;
           const hasPoints = trail.points.some(p => p.x !== 0 || p.y !== 0);
           if (hasPoints) {
             trail.points.forEach((pt) => {
               const dx = pt.x - mouse.x;
               const dy = pt.y - mouse.y;
-              const dist = Math.sqrt(dx * dx + dy * dy);
-              if (dist < minDist) minDist = dist;
+              const distSq = dx * dx + dy * dy;
+              if (distSq < minDistSq) minDistSq = distSq;
             });
-            if (minDist < 250) {
+            if (minDistSq < 62500) { // 250 * 250
+              const minDist = Math.sqrt(minDistSq);
               const proximityFactor = (250 - minDist) / 250;
               targetOp = 0.15 + proximityFactor * 0.40;
             }
@@ -395,8 +396,9 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
           if (hoverProg > 0.01) {
             const dx = btnX - floatX;
             const dy = btnY - floatY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 350) {
+            const distSq = dx * dx + dy * dy;
+            if (distSq < 122500) { // 350 * 350
+              const dist = Math.sqrt(distSq);
               const force = (350 - dist) / 350;
               // Bend lines towards button center
               floatX += dx * force * 0.3 * hoverProg;
@@ -408,8 +410,9 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
           if (mouse.active && !mouse.hoveringButton) {
             const dx = floatX - mouse.x;
             const dy = floatY - mouse.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 160) {
+            const distSq = dx * dx + dy * dy;
+            if (distSq < 25600) { // 160 * 160
+              const dist = Math.sqrt(distSq);
               const force = (160 - dist) / 160;
               floatX += (dx / dist) * force * 35;
               floatY += (dy / dist) * force * 20;
