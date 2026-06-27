@@ -30,8 +30,12 @@ function CountUp({ target, suffix, trigger }: { target: number; suffix: string; 
       const progress = Math.min(elapsed / duration, 1);
       // Ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
-      const value = Math.floor(eased * target);
-      el.textContent = `${value}${suffix}`;
+      
+      const isFloat = target % 1 !== 0;
+      const currentVal = eased * target;
+      const formatted = isFloat ? currentVal.toFixed(2) : Math.floor(currentVal).toString();
+
+      el.textContent = `${formatted}${suffix}`;
       if (progress < 1) requestAnimationFrame(tick);
     };
 
@@ -111,7 +115,7 @@ export function AboutSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-            className="font-sans text-sm leading-relaxed text-white/75 max-w-md"
+            className="font-sans text-sm leading-relaxed text-white/92 max-w-md"
           >
             I am a Full Stack Developer dedicated to building impactful products rather than just applications. Focused on engineering clean, scalable systems with high-quality UI/UX, I love solving real-world problems. I thrive on continuous learning, team collaboration, and crafting thoughtful software that creates real value.
           </motion.p>
@@ -126,7 +130,7 @@ export function AboutSection() {
             {traits.map((trait, i) => (
               <span
                 key={trait}
-                className="px-4 py-2 border border-white/20 rounded-full font-mono text-[10px] tracking-[0.2em] text-white/70 hover:border-secondary/30 hover:text-white/80 transition-all duration-300"
+                className="px-4 py-2 border border-white/20 rounded-full font-mono text-[10px] tracking-[0.2em] text-white/80 hover:border-secondary/40 hover:text-white/90 transition-all duration-300"
               >
                 {trait}
               </span>
@@ -157,7 +161,7 @@ export function AboutSection() {
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
 
             <div className="relative z-10 space-y-4">
-              <div className="font-mono text-[8px] tracking-[0.3em] text-white/65 uppercase">
+              <div className="font-mono text-[8px] tracking-[0.3em] text-white/85 uppercase">
                 System Profile
               </div>
 
@@ -169,7 +173,7 @@ export function AboutSection() {
                   ["Status", "Open to Internship Opportunities"],
                 ].map(([key, val]) => (
                   <div key={key} className="flex justify-between items-center border-b border-white/[0.04] pb-3">
-                    <span className="font-mono text-[10px] text-white/65">{key}</span>
+                    <span className="font-mono text-[10px] text-white/85">{key}</span>
                     <span className="font-sans text-[11px] text-white/95">{val}</span>
                   </div>
                 ))}
@@ -177,7 +181,7 @@ export function AboutSection() {
 
               <div className="pt-2 flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
-                <span className="font-mono text-[9px] text-secondary/70 tracking-widest">
+                <span className="font-mono text-[9px] text-secondary/90 tracking-widest">
                   AVAILABLE FOR COLLABORATION
                 </span>
               </div>
