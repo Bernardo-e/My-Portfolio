@@ -514,28 +514,28 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
 
   if (status === "idle") {
     if (isHoveringButton) {
-      magnetRadius = 14;
-      ringRadius = 5.0;
-      waveAmplitude = 2.0;
-      particleSize = 1.3;
+      magnetRadius = 18;
+      ringRadius = 8.0;
+      waveAmplitude = 2.5;
+      particleSize = 1.4;
       particleColor = "#0ea5e9";
-      lerpSpeed = 0.05;
+      lerpSpeed = 0.06;
     } else {
-      // Particles follow the cursor everywhere with a wider swirling cloud
-      magnetRadius = 12;
-      ringRadius = 6.5;
-      waveAmplitude = 1.2;
-      particleSize = 1.0;
-      particleColor = "#2563eb"; // subtle electric blue
+      // Globe-like: wide magnetic field, large ring radius
+      magnetRadius = 20;
+      ringRadius = 10.0;
+      waveAmplitude = 1.8;
+      particleSize = 1.1;
+      particleColor = "#22d3ee"; // vivid cyan
       lerpSpeed = 0.04;
     }
   } else if (status === "triggering") {
-    magnetRadius = 24;
-    ringRadius = 16.0;
-    waveAmplitude = 3.5;
-    particleSize = 1.8;
+    magnetRadius = 28;
+    ringRadius = 18.0;
+    waveAmplitude = 4.0;
+    particleSize = 2.0;
     particleColor = "#c084fc";
-    lerpSpeed = 0.08;
+    lerpSpeed = 0.09;
   } else if (status === "playing") {
     if (playPhase === "init") {
       magnetRadius = 18;
@@ -576,6 +576,18 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
     <div
       className={`fixed inset-0 z-50 overflow-hidden bg-black bg-[radial-gradient(circle_at_center,rgba(10,32,85,0.45)_0%,rgba(8,20,60,0.2)_45%,rgba(65,12,100,0.08)_75%,rgba(0,0,0,0)_100%)] select-none cursor-default transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${containerTransitionClasses}`}
     >
+      {/* Resume Download Button — top-left corner */}
+      <a
+        href="/Bernardo_Resume.pdf"
+        download="Bernardo_Resume.pdf"
+        className="absolute top-6 left-6 z-50 pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-cyan-400/40 transition-all duration-300 group"
+        style={{ textDecoration: 'none' }}
+      >
+        <svg className="w-3.5 h-3.5 text-cyan-400 group-hover:translate-y-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+        </svg>
+        <span className="text-[10px] font-mono tracking-[0.18em] uppercase text-white/70 group-hover:text-cyan-300 transition-colors duration-200">Resume</span>
+      </a>
       {/* Inject custom high-performance cybernetic keyframe animations */}
       <style dangerouslySetInnerHTML={{
         __html: `
@@ -607,24 +619,44 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
         `
       }} />
 
-      {/* 1. WebGL Antigravity 3D Background */}
-      <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
+      {/* 1. WebGL Antigravity Globe — sphere particles, 3 layers for globe-like depth */}
+      <div className="absolute inset-0 z-0 opacity-55 mix-blend-screen pointer-events-none">
         <Antigravity
-          count={120}
+          count={180}
           magnetRadius={magnetRadius}
           ringRadius={ringRadius}
-          waveSpeed={0.3}
+          waveSpeed={0.25}
           waveAmplitude={waveAmplitude}
           particleSize={particleSize}
           lerpSpeed={lerpSpeed}
           color={particleColor}
           autoAnimate={false}
-          particleVariance={0.8}
-          rotationSpeed={0.06}
-          depthFactor={0.5}
-          pulseSpeed={2.5}
-          particleShape="capsule"
-          fieldStrength={8}
+          particleVariance={0.9}
+          rotationSpeed={0.05}
+          depthFactor={1.5}
+          pulseSpeed={2.0}
+          particleShape="sphere"
+          fieldStrength={6}
+        />
+      </div>
+      {/* Second rotated ring for globe latitude lines effect */}
+      <div className="absolute inset-0 z-0 opacity-25 mix-blend-screen pointer-events-none" style={{ transform: 'rotateY(60deg) scaleX(0.45)' }}>
+        <Antigravity
+          count={80}
+          magnetRadius={magnetRadius * 0.8}
+          ringRadius={ringRadius * 0.9}
+          waveSpeed={0.2}
+          waveAmplitude={waveAmplitude * 0.6}
+          particleSize={particleSize * 0.7}
+          lerpSpeed={lerpSpeed * 0.8}
+          color={particleColor}
+          autoAnimate={false}
+          particleVariance={0.6}
+          rotationSpeed={-0.04}
+          depthFactor={0.8}
+          pulseSpeed={1.5}
+          particleShape="sphere"
+          fieldStrength={5}
         />
       </div>
 
