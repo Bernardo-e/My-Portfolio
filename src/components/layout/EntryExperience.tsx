@@ -168,8 +168,8 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
     window.addEventListener("mousemove", handleGlobalMouseMove);
     window.addEventListener("mouseleave", handleGlobalMouseLeave);
 
-    const numPointsPerTrail = 20;
-    const numTrails = 16;
+    const numPointsPerTrail = 22;
+    const numTrails = 26;
 
     // Colors mapping to creative direction
     const trailColors = [
