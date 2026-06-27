@@ -18,7 +18,8 @@ import { Footer } from "@/components/layout/Footer";
 
 import { cn } from "@/utils/cn";
 import { ResumeModal } from "@/components/common/ResumeModal";
-import { SmoothCursor } from "@/registry/magicui/smooth-cursor";
+// Load SplashCursor dynamically (browser-only WebGL)
+const SplashCursor = dynamic(() => import("@/components/ui/SplashCursor"), { ssr: false });
 
 // Load Lightfall dynamically (browser-only WebGL)
 const Lightfall = dynamic(() => import("@/components/common/Lightfall"), { ssr: false });
@@ -63,10 +64,8 @@ export default function Home() {
 
   return (
     <>
-      {/* Premium Smooth Physics Cursor */}
-      <div className={cn("transition-opacity duration-[1000ms] pointer-events-none fixed z-[9999]", isIntroComplete ? "opacity-100" : "opacity-0")}>
-        <SmoothCursor />
-      </div>
+      {/* Premium WebGL Fluid Splash Cursor — visible from start including intro */}
+      <SplashCursor />
 
       {/* Intro experience */}
       {!isIntroComplete && (
