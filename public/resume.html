@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bernardo - Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090b;
+      --text: #e4e4e7;
+      --text-muted: #a1a1aa;
+      --border: #27272a;
+      --primary: #a855f7;
+      --secondary: #06b6d4;
+      --accent: #3b82f6;
+      --card-bg: #18181b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .resume-container {
+      width: 100%;
+      max-width: 800px;
+      background: rgba(18, 18, 24, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    header {
+      border-b: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .name-title h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(to right, #ffffff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+
+    .name-title p {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--secondary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.25rem;
+    }
+
+    .print-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      font-family: inherit;
+    }
+
+    .print-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .contact-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .contact-links a:hover {
+      color: #fff;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--primary);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .profile-summary {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .education-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .edu-details h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .edu-details p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .edu-gpa {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .date-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 600px) {
+      .skills-grid {
+        grid-template-cols: repeat(2, 1fr);
+      }
+    }
+
+    .skill-category {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .skill-category strong {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .skill-category span {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .projects-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .project-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .project-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .project-tech {
+      font-size: 0.8rem;
+      color: var(--secondary);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    .project-bullets {
+      list-style-type: none;
+      padding-left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .project-bullets li {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      position: relative;
+      padding-left: 1.25rem;
+      line-height: 1.5;
+    }
+
+    .project-bullets li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+    }
+
+    .achievements-list, .leadership-list {
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .achievements-list li, .leadership-list li {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      position: relative;
+      padding-left: 1.25rem;
+    }
+
+    .achievements-list li::before, .leadership-list li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--secondary);
+    }
+
+    .footer-status {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+    }
+
+    /* Print style optimizations */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+      }
+
+      .resume-container {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .name-title h1 {
+        background: none !important;
+        -webkit-text-fill-color: initial !important;
+        color: #000000 !important;
+        font-size: 2.2rem !important;
+      }
+
+      .name-title p {
+        color: #4b5563 !important;
+      }
+
+      .print-btn {
+        display: none !important;
+      }
+
+      .section-title {
+        color: #111827 !important;
+        border-bottom-color: #e5e7eb !important;
+        margin-top: 1.5rem !important;
+      }
+
+      .profile-summary, .edu-details p, .skill-category span, .project-bullets li, .achievements-list li, .leadership-list li {
+        color: #374151 !important;
+      }
+
+      .edu-details h3, .project-title, .edu-gpa {
+        color: #000000 !important;
+      }
+
+      .project-tech {
+        color: #4b5563 !important;
+      }
+
+      .project-bullets li::before {
+        color: #000000 !important;
+      }
+
+      .achievements-list li::before, .leadership-list li::before {
+        color: #4b5563 !important;
+      }
+
+      .skill-category {
+        border-color: #e5e7eb !important;
+        background: transparent !important;
+      }
+
+      .contact-links a {
+        color: #374151 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="resume-container">
+    <header>
+      <div class="header-top">
+        <div class="name-title">
+          <h1>BERNARDO</h1>
+          <p>Full-Stack Developer &bull; Product Builder &bull; Hackathon Winner</p>
+        </div>
+        <button onclick="window.print()" class="print-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print / PDF
+        </button>
+      </div>
+      <div class="contact-links">
+        <span>Chennai, India</span>
+        <span>&bull;</span>
+        <a href="http://localhost:3001">Portfolio</a>
+        <span>&bull;</span>
+        <a href="https://github.com/Bernardo-e" target="_blank">GitHub</a>
+        <span>&bull;</span>
+        <a href="https://www.linkedin.com/in/bernardo-e-092aaa387" target="_blank">LinkedIn</a>
+        <span>&bull;</span>
+        <a href="mailto:narded2007@gmail.com">narded2007@gmail.com</a>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="section-title">Profile Summary</div>
+        <p class="profile-summary">
+          Motivated Full-Stack Developer with hands-on experience designing, building, and deploying modern web applications from scratch. Hackathon winner with a 9.32 CGPA, 7+ shipped projects, and deep interests in product development, startup engineering, and scalable system architecture. Seeking internship opportunities to collaborate with innovative teams and contribute to impactful technology.
+        </p>
+      </section>
+
+      <section>
+        <div class="section-title">Education</div>
+        <div class="education-item">
+          <div class="edu-details">
+            <h3>B.E. Computer Science and Engineering</h3>
+            <p>Sathyabama Institute of Science and Technology, Chennai</p>
+          </div>
+          <div style="text-align: right;">
+            <span class="date-label">2025 – 2029</span>
+            <div class="edu-gpa">CGPA: 9.32 / 10.0</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title">Technical Skills</div>
+        <div class="skills-grid">
+          <div class="skill-category">
+            <strong>Languages</strong>
+            <span>Python &bull; C &bull; JavaScript &bull; TypeScript</span>
+          </div>
+          <div class="skill-category">
+            <strong>Frontend</strong>
+            <span>HTML5 &bull; CSS3 &bull; React.js &bull; Next.js &bull; Tailwind CSS</span>
+          </div>
+          <div class="skill-category">
+            <strong>Backend & Database</strong>
+            <span>Node.js &bull; Express.js &bull; REST APIs &bull; MongoDB &bull; PostgreSQL &bull; Prisma ORM &bull; Neon</span>
+          </div>
+          <div class="skill-category">
+            <strong>Tools & Concepts</strong>
+            <span>Git &bull; GitHub &bull; Vercel &bull; VS Code &bull; RBAC &bull; WebSockets &bull; Authentication</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title">Projects</div>
+        <div class="projects-grid">
+          <div class="project-item">
+            <div class="project-header">
+              <span class="project-title">Campus Orbit</span>
+              <span class="project-tech">Next.js &bull; TypeScript &bull; Prisma &bull; PostgreSQL &bull; Vercel</span>
+            </div>
+            <ul class="project-bullets">
+              <li>Full-stack college discovery platform with authentication, search, comparison, discussion forums, and student profiles.</li>
+              <li>Engineered relational schema with Prisma ORM on Neon PostgreSQL; deployed on Vercel with CI/CD pipeline.</li>
+            </ul>
+          </div>
+
+          <div class="project-item">
+            <div class="project-header">
+              <span class="project-title">ShadowNet AI</span>
+              <span class="project-tech">Python &bull; FastAPI &bull; React &bull; NetworkX &bull; MITRE ATT&CK</span>
+            </div>
+            <ul class="project-bullets">
+              <li>Cybersecurity simulation platform modeling network topology, attack paths, and risk scoring with MITRE ATT&CK mapping.</li>
+              <li>Built interactive security analysis dashboard with real-time attack-path visualization and threat classification.</li>
+            </ul>
+          </div>
+
+          <div class="project-item">
+            <div class="project-header">
+              <span class="project-title">BERD Vault</span>
+              <span class="project-tech">Full-Stack Web &bull; Role-based Access Control</span>
+            </div>
+            <ul class="project-bullets">
+              <li>Student notes-sharing platform with exam mode, voting, bookmarking, and role-based access (Admin / Staff / Student).</li>
+            </ul>
+          </div>
+
+          <div class="project-item">
+            <div class="project-header">
+              <span class="project-title">BERD Habit</span>
+              <span class="project-tech">React &bull; Tailwind CSS &bull; JavaScript</span>
+            </div>
+            <ul class="project-bullets">
+              <li>Gamified habit tracker featuring streak monitoring, plant-growth visualization, and consistency analytics dashboard.</li>
+            </ul>
+          </div>
+
+          <div class="project-item">
+            <div class="project-header">
+              <span class="project-title">BERD Focus</span>
+              <span class="project-tech">React &bull; TypeScript</span>
+            </div>
+            <ul class="project-bullets">
+              <li>Deep-work productivity app with Pomodoro-style focus sessions, goal monitoring, and session analytics.</li>
+            </ul>
+          </div>
+
+          <div class="project-item">
+            <div class="project-header">
+              <span class="project-title">BERD Track</span>
+              <span class="project-tech">Full-Stack Web</span>
+            </div>
+            <ul class="project-bullets">
+              <li>Personal finance tracker with shared expense splitting, category summaries, and user-friendly financial dashboards.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title">Achievements</div>
+        <ul class="achievements-list">
+          <li>Hackathon Winner — SIMATS (Saveetha Engineering College) for delivering an innovative full-stack solution.</li>
+          <li>9.32 CGPA — consistent top academic performer in B.E. Computer Science Engineering.</li>
+          <li>Shipped 6+ production web applications with live deployment, real features, and documented code.</li>
+          <li>Active GitHub contributor with consistent daily commit history demonstrating engineering discipline.</li>
+        </ul>
+      </section>
+
+      <section>
+        <div class="section-title">Leadership & Activities</div>
+        <ul class="leadership-list">
+          <li>AWS Club Applicant — pursuing cloud computing exposure through campus-led initiatives.</li>
+          <li>Hackathon Participant — regular competitor in college and national-level technical hackathons.</li>
+          <li>Startup & Product Enthusiast — independently exploring product building, MVP development, and founder strategy.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer-status">
+      Open to internships &bull; Technical clubs &bull; Software engineering roles &bull; Available immediately
+    </footer>
+  </div>
+</body>
+</html>
