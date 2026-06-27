@@ -168,8 +168,8 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
     window.addEventListener("mousemove", handleGlobalMouseMove);
     window.addEventListener("mouseleave", handleGlobalMouseLeave);
 
-    const numPointsPerTrail = 24;
-    const numTrails = 19;
+    const numPointsPerTrail = 16;
+    const numTrails = 12;
 
     // Colors mapping to creative direction
     const trailColors = [
@@ -179,7 +179,7 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
       "rgba(0, 229, 255, 0.4)" // Vivid electric blue
     ];
 
-    // Initialize 19 light trails
+    // Initialize 12 light trails
     const trails: Trail[] = Array.from({ length: numTrails }, (_, i) => {
       const relX = i / (numTrails - 1);
       
@@ -251,12 +251,17 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
         
         // Shows custom cursor follower in all active states, including idle (standby)
         const showCursor = mouse.active && curStatus !== "ended";
-        cursorDot.style.opacity = showCursor ? "1" : "0";
+        const opStr = showCursor ? "1" : "0";
+        if (cursorDot.style.opacity !== opStr) {
+          cursorDot.style.opacity = opStr;
+        }
         
         ringPosRef.current.x += (mouse.targetX - ringPosRef.current.x) * 0.15;
         ringPosRef.current.y += (mouse.targetY - ringPosRef.current.y) * 0.15;
         cursorRing.style.transform = `translate3d(${ringPosRef.current.x}px, ${ringPosRef.current.y}px, 0)`;
-        cursorRing.style.opacity = showCursor ? "1" : "0";
+        if (cursorRing.style.opacity !== opStr) {
+          cursorRing.style.opacity = opStr;
+        }
       }
 
       // If video recreation is running/transitioning, bypass canvas trails rendering to optimize resources

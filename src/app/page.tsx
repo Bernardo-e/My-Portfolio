@@ -96,20 +96,20 @@ export default function Home() {
           GLOBAL LIGHTFALL RAIN — preloaded and initialized in bg
           ─────────────────────────────────────────────────────────
         */}
-        <div className={cn("fixed inset-0 z-0 pointer-events-none transition-opacity duration-[1400ms]", isIntroComplete ? "opacity-55" : "opacity-0")} aria-hidden>
+        <div className={cn("fixed inset-0 z-0 pointer-events-none transition-opacity duration-[1400ms]", isIntroComplete ? "opacity-85" : "opacity-0")} aria-hidden>
           <Lightfall
             colors={GLOBAL_LIGHTFALL_COLORS}
             backgroundColor="#010b18"
             speed={0.5}
-            streakCount={5}
-            streakWidth={0.65}
-            streakLength={1.1}
-            glow={0.7}
-            density={0.38}
+            streakCount={6}
+            streakWidth={0.85}
+            streakLength={1.2}
+            glow={0.85}
+            density={0.46}
             twinkle={0.5}
             zoom={2.6}
-            backgroundGlow={0.18}
-            opacity={0.55}
+            backgroundGlow={0.22}
+            opacity={0.85}
             mouseInteraction={true}
             mouseStrength={0.28}
             mouseRadius={0.85}
