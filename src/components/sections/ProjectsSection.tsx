@@ -48,6 +48,12 @@ const projectPalettes: Record<string, { accent: string; bg: string; glow: string
     bg: "from-purple-950/40 to-indigo-950/20",
     glow: "rgba(139,92,246,0.15)",
     textGlow: "rgba(139,92,246,0.4)"
+  },
+  "berd-track": {
+    accent: "#f97316",
+    bg: "from-orange-950/40 to-amber-950/20",
+    glow: "rgba(249,115,22,0.15)",
+    textGlow: "rgba(249,115,22,0.4)"
   }
 };
 
@@ -103,9 +109,9 @@ function ProjectCard({ project, index, onSelect }: ProjectCardProps) {
           transition: "transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)",
           willChange: "transform",
         } as React.CSSProperties}
-        className="relative rounded-2xl border border-white/[0.06] overflow-hidden cursor-pointer group h-full"
+        className="relative rounded-2xl border border-white/[0.12] overflow-hidden cursor-pointer group h-full"
       >
-        <div className={cn("absolute inset-0 bg-gradient-to-br", palette.bg, "transition-opacity duration-500", hovered ? "opacity-100" : "opacity-60")} />
+        <div className={cn("absolute inset-0 bg-gradient-to-br", palette.bg, "transition-opacity duration-500", hovered ? "opacity-100" : "opacity-80")} />
 
         <div
           className="card-glow absolute w-48 h-48 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transition-opacity duration-300"
@@ -126,7 +132,7 @@ function ProjectCard({ project, index, onSelect }: ProjectCardProps) {
         <div className="relative z-10 p-8 flex flex-col h-full min-h-[340px]">
           <div className="flex items-start justify-between mb-6">
             <div className="space-y-1">
-              <div className="font-mono text-[8px] tracking-[0.3em] text-white/60 uppercase">
+              <div className="font-mono text-[8px] tracking-[0.3em] text-white/80 uppercase">
                 {project.date}&nbsp;&nbsp;·&nbsp;&nbsp;{project.role}
               </div>
               <h3
@@ -149,7 +155,7 @@ function ProjectCard({ project, index, onSelect }: ProjectCardProps) {
             </motion.div>
           </div>
 
-          <p className="font-sans text-sm leading-relaxed text-white/75 flex-1">
+          <p className="font-sans text-sm leading-relaxed text-white/90 flex-1">
             {project.description}
           </p>
 
@@ -157,8 +163,8 @@ function ProjectCard({ project, index, onSelect }: ProjectCardProps) {
             {project.tags.slice(0, 4).map(tag => (
               <span
                 key={tag}
-                className="px-2.5 py-1 rounded-full font-mono text-[9px] tracking-wider border border-white/[0.08] text-white/70"
-                style={{ borderColor: hovered ? palette.accent + "25" : undefined }}
+                className="px-2.5 py-1 rounded-full font-mono text-[9px] tracking-wider border border-white/[0.14] text-white/85"
+                style={{ borderColor: hovered ? palette.accent + "35" : undefined }}
               >
                 {tag}
               </span>
@@ -276,7 +282,8 @@ export function ProjectsSection() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.7 }}
-              className="relative w-full max-w-5xl max-h-[85vh] overflow-y-auto rounded-2xl border border-white/[0.08] bg-[#020617]/95 p-6 sm:p-10 md:p-12 shadow-2xl custom-scrollbar"
+              className="relative w-full max-w-5xl max-h-[88vh] overflow-y-scroll overscroll-contain rounded-2xl border border-white/[0.12] bg-[#020617]/98 p-6 sm:p-10 md:p-12 shadow-2xl"
+              style={{ touchAction: "pan-y", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
@@ -295,7 +302,7 @@ export function ProjectsSection() {
 
               {/* Title & Metadata */}
               <div className="border-b border-white/[0.06] pb-8 mb-8 space-y-2">
-                <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-white/60">
+                <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-white/80">
                   {selectedProject.date} // Role: {selectedProject.role}
                 </span>
                 <h2 className="font-display font-light text-4xl sm:text-5xl text-white tracking-wide">
@@ -309,11 +316,11 @@ export function ProjectsSection() {
                 <div className="space-y-8">
                   {/* Overview */}
                   <div className="space-y-3">
-                    <h3 className="font-mono text-[10px] tracking-[0.25em] text-white/60 uppercase flex items-center gap-2">
+                    <h3 className="font-mono text-[10px] tracking-[0.25em] text-white/80 uppercase flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
                       Overview
                     </h3>
-                    <p className="font-sans text-sm leading-relaxed text-white/80">
+                    <p className="font-sans text-sm leading-relaxed text-white/90">
                       {selectedProject.longDescription || selectedProject.description}
                     </p>
                   </div>
@@ -350,13 +357,13 @@ export function ProjectsSection() {
                   {/* Key Features */}
                   {selectedProject.features && (
                     <div className="space-y-3">
-                      <h3 className="font-mono text-[10px] tracking-[0.25em] text-white/60 uppercase">
+                      <h3 className="font-mono text-[10px] tracking-[0.25em] text-white/80 uppercase">
                         Key Features
                       </h3>
                       <ul className="space-y-2">
                         {selectedProject.features.map((feat) => (
-                          <li key={feat} className="flex items-start gap-2.5 text-sm text-white/75">
-                            <span className="text-secondary/70 mt-1">•</span>
+                          <li key={feat} className="flex items-start gap-2.5 text-sm text-white/90">
+                            <span className="text-secondary/80 mt-1">•</span>
                             <span>{feat}</span>
                           </li>
                         ))}
@@ -369,20 +376,20 @@ export function ProjectsSection() {
                     <div className="space-y-4">
                       {selectedProject.challenges && (
                         <div className="space-y-2">
-                          <h4 className="font-mono text-[9px] tracking-widest text-white/60 uppercase">
+                          <h4 className="font-mono text-[9px] tracking-widest text-white/75 uppercase">
                             Engineering Challenge
                           </h4>
-                          <p className="font-sans text-[12px] leading-relaxed text-white/75">
+                          <p className="font-sans text-[12px] leading-relaxed text-white/85">
                             {selectedProject.challenges}
                           </p>
                         </div>
                       )}
                       {selectedProject.lessons && (
                         <div className="space-y-2">
-                          <h4 className="font-mono text-[9px] tracking-widest text-white/60 uppercase">
+                          <h4 className="font-mono text-[9px] tracking-widest text-white/75 uppercase">
                             Key Lesson Learned
                           </h4>
-                          <p className="font-sans text-[12px] leading-relaxed text-white/75">
+                          <p className="font-sans text-[12px] leading-relaxed text-white/85">
                             {selectedProject.lessons}
                           </p>
                         </div>
@@ -392,14 +399,14 @@ export function ProjectsSection() {
 
                   {/* Tech Stack */}
                   <div className="space-y-3">
-                    <h3 className="font-mono text-[10px] tracking-[0.25em] text-white/60 uppercase">
+                    <h3 className="font-mono text-[10px] tracking-[0.25em] text-white/80 uppercase">
                       Technology Stack
                     </h3>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedProject.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-2.5 py-1 rounded-full font-mono text-[9.5px] border border-white/[0.08] text-white/75 bg-white/[0.01]"
+                          className="px-2.5 py-1 rounded-full font-mono text-[9.5px] border border-white/[0.15] text-white/90 bg-white/[0.03]"
                         >
                           {tag}
                         </span>

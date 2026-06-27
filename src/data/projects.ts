@@ -39,7 +39,7 @@ export const projects: Project[] = [
     role: "Hackathon Project",
     featured: true,
     images: { thumbnail: "" },
-    links: { github: "https://github.com/Bernardo-e/shadownet" },
+    links: { github: "https://github.com/Bernardo-e/ShadowNetAI" },
     metrics: [
       { label: "Type", value: "Hackathon" },
       { label: "Engine", value: "NetworkX" },
@@ -67,7 +67,7 @@ export const projects: Project[] = [
     role: "Lead Developer",
     featured: true,
     images: { thumbnail: "" },
-    links: { github: "https://github.com/Bernardo-e" },
+    links: { github: "https://github.com/Bernardo-e/Berd-Ai-Resume", live: "https://berd-ai-resume.vercel.app/" },
     metrics: [
       { label: "Builder", value: "AI-Powered" },
       { label: "UI", value: "Modern UX" },
@@ -95,7 +95,7 @@ export const projects: Project[] = [
     role: "Lead Designer & Developer",
     featured: true,
     images: { thumbnail: "/berd-habit.jpg" },
-    links: { github: "https://github.com/Bernardo-e/berd-habit", live: "https://berd-habit.vercel.app/" },
+    links: { github: "https://github.com/Bernardo-e/Berd-Habit", live: "https://berd-habit.vercel.app/" },
     metrics: [
       { label: "UI", value: "Interactive" },
       { label: "Gamification", value: "Plant Growth" },
@@ -151,7 +151,7 @@ export const projects: Project[] = [
     role: "Developer",
     featured: true,
     images: { thumbnail: "" },
-    links: { github: "https://github.com/Bernardo-e" },
+    links: { github: "https://github.com/Bernardo-e/Berd-To-Do-List", live: "https://berd-to-do-list.vercel.app/" },
     metrics: [
       { label: "UX", value: "Smooth Transitions" },
       { label: "Workflow", value: "Productivity" },
@@ -179,7 +179,7 @@ export const projects: Project[] = [
     role: "Lead Developer",
     featured: true,
     images: { thumbnail: "" },
-    links: { github: "https://github.com/Bernardo-e" },
+    links: { github: "https://github.com/Bernardo-e/Berd-Vault" },
     metrics: [
       { label: "Focus", value: "Exam Prep" },
       { label: "Security", value: "RBAC" },
@@ -196,6 +196,34 @@ export const projects: Project[] = [
     ],
     challenges: "Designing clean API middlewares to intercept and moderate files dynamically based on student ratings.",
     lessons: "MongoDB aggregator expressions allow for clean sorting of documents based on upvote rates and date weights."
+  },
+  {
+    id: "berd-track",
+    title: "BERD Track",
+    slug: "berd-track",
+    description: "A personal finance and expense tracking application with visualized spending insights and budget management tools.",
+    longDescription: "BERD Track is a personal finance tracker that helps users log expenses, visualize spending patterns, and stay within budget goals with clean data visualizations.",
+    tags: ["React", "TypeScript", "Tailwind CSS", "Chart.js"],
+    role: "Solo Developer",
+    featured: true,
+    images: { thumbnail: "" },
+    links: { github: "https://github.com/Bernardo-e/Berd-Track", live: "https://berd-track.vercel.app/" },
+    metrics: [
+      { label: "Focus", value: "Finance" },
+      { label: "Charts", value: "Visual" },
+      { label: "Status", value: "Live" }
+    ],
+    date: "2024",
+    problem: "Manually logging expenses is tedious, and most budgeting apps are overly complex for everyday personal use.",
+    solution: "Built a streamlined expense tracker with intuitive forms, real-time category breakdowns, and clear visual budget progress.",
+    features: [
+      "Category-based expense logging",
+      "Budget progress visualizations",
+      "Monthly spending summaries",
+      "Persistent local data storage"
+    ],
+    challenges: "Keeping chart data reactive to real-time state updates without unnecessary re-renders.",
+    lessons: "Memoizing chart data transformations prevents expensive recalculations on every component update."
   }
 ];
 

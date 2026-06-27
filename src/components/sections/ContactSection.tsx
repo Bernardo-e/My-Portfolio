@@ -12,6 +12,8 @@ export function ContactSection({ onOpenResume }: ContactSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-15%" });
   const [emailHovered, setEmailHovered] = useState(false);
+  const [githubHovered, setGithubHovered] = useState(false);
+  const [linkedinHovered, setLinkedinHovered] = useState(false);
 
   return (
     <section
@@ -98,23 +100,39 @@ export function ContactSection({ onOpenResume }: ContactSectionProps) {
               href="https://github.com/Bernardo-e"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-[9px] tracking-[0.3em] text-white/60 hover:text-white uppercase transition-colors duration-300 cursor-pointer"
+              onMouseEnter={() => setGithubHovered(true)}
+              onMouseLeave={() => setGithubHovered(false)}
+              className="relative inline-block font-mono text-[10px] tracking-[0.3em] text-white/70 hover:text-sky-400 uppercase transition-all duration-300 cursor-pointer pb-1.5"
             >
               GitHub
+              <span
+                className="absolute bottom-0 left-0 right-0 h-[2px] bg-sky-400 transition-transform duration-300 origin-left"
+                style={{
+                  transform: githubHovered ? "scaleX(1)" : "scaleX(0)"
+                }}
+              />
             </a>
             <a
               href="https://www.linkedin.com/in/bernardo-e-092aaa387"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-[9px] tracking-[0.3em] text-white/60 hover:text-white uppercase transition-colors duration-300 cursor-pointer"
+              onMouseEnter={() => setLinkedinHovered(true)}
+              onMouseLeave={() => setLinkedinHovered(false)}
+              className="relative inline-block font-mono text-[10px] tracking-[0.3em] text-white/70 hover:text-sky-400 uppercase transition-all duration-300 cursor-pointer pb-1.5"
             >
               LinkedIn
+              <span
+                className="absolute bottom-0 left-0 right-0 h-[2px] bg-sky-400 transition-transform duration-300 origin-left"
+                style={{
+                  transform: linkedinHovered ? "scaleX(1)" : "scaleX(0)"
+                }}
+              />
             </a>
           </div>
 
           <button
             onClick={onOpenResume}
-            className="px-6 py-2.5 border border-white/20 hover:border-white/40 font-mono text-[9px] tracking-[0.25em] text-white/75 hover:text-white uppercase rounded-md transition-all duration-300 cursor-pointer bg-white/[0.01]"
+            className="px-8 py-3.5 border border-white/30 hover:border-sky-400 font-mono text-[10px] tracking-[0.25em] text-white hover:text-sky-300 uppercase rounded-md transition-all duration-300 cursor-pointer bg-white/[0.04] hover:bg-sky-500/10 hover:shadow-[0_0_20px_rgba(14,165,233,0.22)] hover:scale-[1.03]"
           >
             View Resume
           </button>

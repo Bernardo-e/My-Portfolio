@@ -14,7 +14,19 @@ interface ResumeModalProps {
 export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
   const [loaded, setLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [downloadState, setDownloadState] = useState<"idle" | "downloading" | "completed">("idle");
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const handleDownload = () => {
+    if (downloadState !== "idle") return;
+    setDownloadState("downloading");
+    setTimeout(() => {
+      setDownloadState("completed");
+      setTimeout(() => {
+        setDownloadState("idle");
+      }, 1800);
+    }, 1200);
+  };
 
   // Lock body scroll and handle keyboard events
   useEffect(() => {
@@ -135,13 +147,51 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                       className="opacity-75 scale-x-125 scale-y-110"
                     />
                   </div>
+                  <style dangerouslySetInnerHTML={{
+                    __html: `
+                      @keyframes arrow-download-bounce {
+                        0%, 100% { transform: translateY(0); }
+                        50% { transform: translateY(2.5px); }
+                      }
+                      .group:hover .arrow-bounce {
+                        animation: arrow-download-bounce 0.8s ease-in-out infinite;
+                      }
+                    `
+                  }} />
                   <a
                     href="/Bernardo_Resume.pdf"
                     download="Bernardo_Resume.pdf"
-                    className="relative z-10 flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-md font-mono text-[9px] tracking-[0.2em] uppercase font-semibold hover:bg-zinc-200 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]"
+                    onClick={handleDownload}
+                    className={cn(
+                      "relative z-10 flex items-center gap-2 px-6 py-3 rounded-md font-mono text-[10px] tracking-[0.2em] uppercase font-semibold transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.25)] hover:scale-[1.03]",
+                      downloadState === "completed" 
+                        ? "bg-emerald-500 hover:bg-emerald-600 text-white" 
+                        : "bg-white text-black hover:bg-zinc-200"
+                    )}
                   >
-                    <Download size={10} />
-                    <span>Download PDF</span>
+                    {downloadState === "idle" && (
+                      <>
+                        <Download size={11} className="arrow-bounce" />
+                        <span>Download PDF</span>
+                      </>
+                    )}
+                    {downloadState === "downloading" && (
+                      <>
+                        <svg className="animate-spin w-3.5 h-3.5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Saving...</span>
+                      </>
+                    )}
+                    {downloadState === "completed" && (
+                      <>
+                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Saved</span>
+                      </>
+                    )}
                   </a>
                 </div>
 

@@ -64,6 +64,18 @@ const hoverAnimation = {
 export function Navigation({ visible = true }: NavigationProps) {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const [downloadState, setDownloadState] = useState<"idle" | "downloading" | "completed">("idle");
+
+  const handleDownload = () => {
+    if (downloadState !== "idle") return;
+    setDownloadState("downloading");
+    setTimeout(() => {
+      setDownloadState("completed");
+      setTimeout(() => {
+        setDownloadState("idle");
+      }, 1800);
+    }, 1200);
+  };
 
   useEffect(() => {
     let ticking = false;
@@ -122,13 +134,15 @@ export function Navigation({ visible = true }: NavigationProps) {
           )}
         >
           {/* Logo */}
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="font-display font-light text-[11px] tracking-[0.4em] text-white/80 hover:text-white transition-colors duration-300 uppercase cursor-pointer"
-            data-magnetic
-          >
-            Bernardo
-          </button>
+          <div className="flex-1 flex justify-start">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="font-display font-light text-[11px] tracking-[0.4em] text-white/80 hover:text-white transition-colors duration-300 uppercase cursor-pointer"
+              data-magnetic
+            >
+              Bernardo
+            </button>
+          </div>
 
           {/* Premium Circular Node Navigation */}
           <ul className="relative flex items-start gap-10 py-1">
@@ -242,23 +256,56 @@ export function Navigation({ visible = true }: NavigationProps) {
           </ul>
 
           {/* Right CTA & Resume Download */}
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex-1 flex items-center justify-end gap-4 sm:gap-6">
+            <style dangerouslySetInnerHTML={{
+              __html: `
+                @keyframes arrow-download-bounce {
+                  0%, 100% { transform: translateY(0); }
+                  50% { transform: translateY(2.5px); }
+                }
+                .group:hover .arrow-bounce {
+                  animation: arrow-download-bounce 0.8s ease-in-out infinite;
+                }
+              `
+            }} />
             <a
               href="/Bernardo_Resume.pdf"
               download="Bernardo_Resume.pdf"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-sky-400/40 transition-all duration-300 group"
+              onClick={handleDownload}
+              className="flex items-center gap-2 px-[18px] py-[8px] rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-sky-400/50 hover:shadow-[0_0_15px_rgba(14,165,233,0.15)] hover:scale-[1.03] transition-all duration-300 group cursor-pointer"
               style={{ textDecoration: 'none' }}
             >
-              <svg className="w-3 h-3 text-sky-400 group-hover:translate-y-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
-              </svg>
-              <span className="text-[8px] font-mono tracking-[0.15em] uppercase text-white/80 group-hover:text-sky-300 transition-colors duration-200">Resume</span>
+              {downloadState === "idle" && (
+                <>
+                  <svg className="w-3.5 h-3.5 text-sky-400 arrow-bounce transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+                  </svg>
+                  <span className="text-[9.5px] font-mono tracking-[0.15em] uppercase text-white/80 group-hover:text-sky-300 transition-colors duration-200">Resume</span>
+                </>
+              )}
+              {downloadState === "downloading" && (
+                <>
+                  <svg className="animate-spin w-3.5 h-3.5 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-[9.5px] font-mono tracking-[0.15em] uppercase text-sky-400">Saving...</span>
+                </>
+              )}
+              {downloadState === "completed" && (
+                <>
+                  <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-[9.5px] font-mono tracking-[0.15em] uppercase text-emerald-400 font-semibold">Saved</span>
+                </>
+              )}
             </a>
             <a
               href="mailto:narded2007@gmail.com"
-              className="flex items-center justify-center p-1.5 sm:p-0 font-mono text-[9px] tracking-[0.25em] uppercase text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
+              className="flex items-center justify-center p-1.5 sm:p-0 font-mono text-[10.5px] tracking-[0.25em] uppercase text-white/70 hover:text-white transition-colors duration-300 cursor-pointer hover:scale-[1.02]"
             >
-              <Mail size={13} className="inline sm:hidden text-white/70 hover:text-white" />
+              <Mail size={14} className="inline sm:hidden text-white/70 hover:text-white" />
               <span className="hidden sm:inline">narded2007@gmail.com</span>
             </a>
           </div>
