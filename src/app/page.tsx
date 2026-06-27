@@ -20,6 +20,7 @@ import { cn } from "@/utils/cn";
 import { ResumeModal } from "@/components/common/ResumeModal";
 // Load Lightfall dynamically (browser-only WebGL)
 const Lightfall = dynamic(() => import("@/components/common/Lightfall"), { ssr: false });
+const SplashCursor = dynamic(() => import("@/components/ui/SplashCursor"), { ssr: false });
 
 const GLOBAL_LIGHTFALL_COLORS = ["#1e3a8a", "#3b82f6", "#6366f1", "#7c3aed", "#0ea5e9"];
 
@@ -61,6 +62,19 @@ export default function Home() {
 
   return (
     <>
+      {isIntroComplete && (
+        <SplashCursor
+          SIM_RESOLUTION={32}
+          DYE_RESOLUTION={256}
+          PRESSURE_ITERATIONS={4}
+          DENSITY_DISSIPATION={3.5}
+          VELOCITY_DISSIPATION={2.0}
+          SPLAT_RADIUS={0.15}
+          CURL={1.5}
+          SHADING={false}
+        />
+      )}
+
       {/* WebGL Lightfall rain — only one WebGL canvas active at a time */}
       {!isIntroComplete && (
         <EntryExperience onComplete={handleIntroComplete} />
