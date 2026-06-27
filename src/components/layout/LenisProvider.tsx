@@ -18,10 +18,12 @@ export function LenisProvider({ children }: LenisProviderProps) {
 
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.08,
+      lerp: 0.11,           // silky momentum — 0.08 was too jittery, 0.12+ feels laggy
       smoothWheel: true,
-      touchMultiplier: 1.8,
-      wheelMultiplier: 1,
+      touchMultiplier: 2.2, // responsive mobile swipe
+      wheelMultiplier: 0.9, // slight decel for elegant desktop feel
+      infinite: false,
+      autoRaf: false,       // we drive RAF ourselves via GSAP ticker
     });
     lenisRef.current = lenis;
 

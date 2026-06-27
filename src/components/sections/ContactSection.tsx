@@ -49,20 +49,20 @@ export function ContactSection({ onOpenResume }: ContactSectionProps) {
 
         {/* Heading */}
         <motion.h2
-          initial={{ opacity: 0, y: 40, filter: "blur(6px)" }}
-          animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           className="font-display font-extralight text-[clamp(2.3rem,6.5vw,5.5rem)] leading-none tracking-tight text-white mb-6"
         >
           Let&apos;s Build Something<br />
-          <span className="text-white/25">Great Together.</span>
+          <span className="text-white/70">Great Together.</span>
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, delay: 0.3 }}
-          className="font-sans text-sm text-white/70 max-w-sm mb-14 leading-relaxed"
+          className="font-sans text-sm text-white/85 max-w-sm mb-14 leading-relaxed"
         >
           Whether you have an internship position, a SaaS build, or want to discuss engineering — let&apos;s connect.
         </motion.p>

@@ -18,10 +18,6 @@ import { Footer } from "@/components/layout/Footer";
 
 import { cn } from "@/utils/cn";
 import { ResumeModal } from "@/components/common/ResumeModal";
-// Load SplashCursor dynamically (browser-only WebGL)
-const SplashCursor = dynamic(() => import("@/components/ui/SplashCursor"), { ssr: false });
-const SmoothCursor = dynamic(() => import("@/registry/magicui/smooth-cursor").then(mod => mod.SmoothCursor), { ssr: false });
-
 // Load Lightfall dynamically (browser-only WebGL)
 const Lightfall = dynamic(() => import("@/components/common/Lightfall"), { ssr: false });
 
@@ -65,20 +61,7 @@ export default function Home() {
 
   return (
     <>
-      {/* WebGL Fluid Splash Cursor — active after intro, perf-tuned resolutions */}
-      {isIntroComplete && (
-        <SplashCursor
-          SIM_RESOLUTION={64}
-          DYE_RESOLUTION={512}
-          PRESSURE_ITERATIONS={8}
-          DENSITY_DISSIPATION={4}
-          VELOCITY_DISSIPATION={2.5}
-          SPLAT_RADIUS={0.18}
-          CURL={2}
-        />
-      )}
-
-      {/* Intro experience */}
+      {/* WebGL Lightfall rain — only one WebGL canvas active at a time */}
       {!isIntroComplete && (
         <EntryExperience onComplete={handleIntroComplete} />
       )}
@@ -101,11 +84,11 @@ export default function Home() {
             colors={GLOBAL_LIGHTFALL_COLORS}
             backgroundColor="#010b18"
             speed={0.5}
-            streakCount={6}
+            streakCount={4}
             streakWidth={0.85}
             streakLength={1.2}
             glow={0.85}
-            density={0.46}
+            density={0.38}
             twinkle={0.5}
             zoom={2.6}
             backgroundGlow={0.22}

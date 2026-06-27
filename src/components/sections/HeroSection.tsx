@@ -32,32 +32,19 @@ export function HeroSection() {
 
     const ctx = gsap.context(() => {
       // Parallax — use transform3d to stay on GPU compositor thread
-      const t1 = gsap.to(text, {
-        y: "-12%",
+      gsap.to(text, {
+        y: "-10%",
         ease: "none",
         scrollTrigger: {
           trigger: section,
           start: "top top",
           end: "bottom top",
-          scrub: 1,          // scrub:1 = 1s smoothing, prevents jank spikes
+          scrub: 2,          // Higher scrub value = more damping = less jank
           invalidateOnRefresh: true,
         }
       });
 
-      // Fade out hero — opacity only (compositor thread, no layout)
-      const t2 = gsap.to(section, {
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "55% top",
-          end: "bottom top",
-          scrub: 1,
-          invalidateOnRefresh: true,
-        }
-      });
-
-      // Scroll indicator float — CSS animation is more performant, but GSAP yoyo is fine here
+      // Scroll indicator float
       gsap.to(scrollIndicatorRef.current, {
         y: 7,
         repeat: -1,
@@ -67,7 +54,7 @@ export function HeroSection() {
       });
     }, section);
 
-    return () => ctx.revert(); // Properly scoped cleanup — does NOT kill other sections' triggers
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -75,7 +62,6 @@ export function HeroSection() {
       ref={sectionRef}
       id="hero"
       className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-transparent"
-      style={{ willChange: "opacity" }}
     >
       {/* Vignette overlays for text legibility */}
       <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/50 via-transparent to-black/75 pointer-events-none" />

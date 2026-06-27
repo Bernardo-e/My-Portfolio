@@ -56,21 +56,21 @@ export function VisionSection() {
 
         {/* Main statement */}
         <motion.h2
-          initial={{ opacity: 0, y: 50, filter: "blur(8px)" }}
-          animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           className="font-display font-extralight text-[clamp(2rem,5vw,4.5rem)] leading-[1.1] tracking-tight text-white mb-8"
         >
           I don&apos;t build features.
           <br />
-          <span className="text-white/60">I build futures.</span>
+          <span className="text-white/85">I build futures.</span>
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1.0, delay: 0.35 }}
-          className="font-sans text-sm leading-relaxed text-white/70 max-w-lg mx-auto mb-20"
+          className="font-sans text-sm leading-relaxed text-white/85 max-w-lg mx-auto mb-20"
         >
           I believe software should solve meaningful problems while delivering exceptional user experiences. My goal is to build products that create real value, continuously improve as an engineer, and contribute to impactful technology through innovation and thoughtful design.
         </motion.p>
@@ -83,12 +83,12 @@ export function VisionSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.5 + i * 0.12 }}
-              className="group p-6 rounded-xl border border-white/[0.05] bg-white/[0.01] hover:border-secondary/15 hover:bg-white/[0.025] transition-all duration-500"
+              className="group p-6 rounded-xl border border-white/[0.1] bg-white/[0.02] hover:border-secondary/25 hover:bg-white/[0.04] transition-all duration-500"
             >
-              <div className="font-mono text-[10px] text-secondary/40 mb-3 tracking-widest">
+              <div className="font-mono text-[10px] text-secondary/70 mb-3 tracking-widest">
                 {number}
               </div>
-              <p className="font-sans text-sm leading-relaxed text-white/75 group-hover:text-white/80 transition-colors duration-300">
+              <p className="font-sans text-sm leading-relaxed text-white/90 group-hover:text-white transition-colors duration-300">
                 {text}
               </p>
             </motion.div>
