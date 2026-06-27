@@ -66,8 +66,20 @@ export function Navigation({ visible = true }: NavigationProps) {
   const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
+    let ticking = false;
+    let isScrolled = false;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 60);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const shouldScroll = window.scrollY > 60;
+        if (shouldScroll !== isScrolled) {
+          isScrolled = shouldScroll;
+          setScrolled(shouldScroll);
+        }
+        ticking = false;
+      });
     };
 
     const sections = document.querySelectorAll("section[id]");

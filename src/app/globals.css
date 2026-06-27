@@ -120,7 +120,10 @@
   }
   
   body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   html {
@@ -129,9 +132,14 @@
     scrollbar-color: var(--border) transparent;
   }
 
-  /* Promote sections to their own GPU layers so scrolling is compositor-only */
+  /* Hide default cursor when SmoothCursor is active on desktop */
+  [data-smooth-cursor] * {
+    cursor: none !important;
+  }
+
+  /* GPU layer promotion — layout style is cheaper than paint layout */
   section {
-    contain: paint layout;
+    contain: layout style;
   }
 
   /* Custom Premium Scrollbar for Webkit */

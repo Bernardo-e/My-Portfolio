@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 const stats = [
@@ -12,26 +12,33 @@ const stats = [
 
 const traits = ["Craftsman", "Builder", "Visionary"];
 
+// CountUp with rAF + direct DOM text mutation — zero React re-renders during animation
 function CountUp({ target, suffix, trigger }: { target: number; suffix: string; trigger: boolean }) {
-  const [count, setCount] = useState(0);
+  const spanRef = useRef<HTMLSpanElement>(null);
+  const hasRun = useRef(false);
+
   useEffect(() => {
-    if (!trigger) return;
-    let start = 0;
+    if (!trigger || hasRun.current || !spanRef.current) return;
+    hasRun.current = true;
+
+    const el = spanRef.current;
     const duration = 1600;
-    const step = 16;
-    const increment = target / (duration / step);
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, step);
-    return () => clearInterval(timer);
-  }, [trigger, target]);
-  return <span>{count}{suffix}</span>;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.floor(eased * target);
+      el.textContent = `${value}${suffix}`;
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  }, [trigger, target, suffix]);
+
+  return <span ref={spanRef}>0{suffix}</span>;
 }
 
 export function AboutSection() {

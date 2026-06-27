@@ -76,9 +76,10 @@ export default function Home() {
       {/* Main portfolio — reveals after intro */}
       <div
         className={cn(
-          "transition-all duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "transition-[opacity,transform] duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
           isIntroComplete ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-6 pointer-events-none"
         )}
+        style={isIntroComplete ? undefined : { willChange: "opacity, transform" }}
       >
         {/*
           ─────────────────────────────────────────────────────────

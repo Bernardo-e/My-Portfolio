@@ -74,7 +74,7 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[500] flex flex-col bg-black/85 backdrop-blur-2xl overflow-hidden select-none"
+          className="fixed inset-0 z-[500] flex flex-col bg-black/88 backdrop-blur-xl overflow-hidden select-none"
         >
           {/* Top ambient soft radial glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />

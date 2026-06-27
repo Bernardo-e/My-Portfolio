@@ -18,10 +18,12 @@ export function LenisProvider({ children }: LenisProviderProps) {
 
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.08,
+      lerp: 0.1,
       smoothWheel: true,
-      touchMultiplier: 1.8,
-      wheelMultiplier: 1,
+      touchMultiplier: 2.0,
+      wheelMultiplier: 1.1,
+      // Exponential ease-out: settles instantly without overshoot
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
     lenisRef.current = lenis;
 

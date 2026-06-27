@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback, memo } from "react";
 import { motion, useInView } from "framer-motion";
 import { skillCategories } from "@/data/skills";
 
@@ -11,25 +11,12 @@ interface SkillNode3D {
   x3d: number;
   y3d: number;
   z3d: number;
-  x: number;
-  y: number;
-  scale: number;
-  opacity: number;
 }
 
-interface ProjectedNode extends SkillNode3D {
-  x: number;
-  y: number;
-  z3d: number;
-  scale: number;
-  opacity: number;
-}
-
-// Spatially clusters technologies around category centers on a unit 3D sphere
+// ─── Hoisted to module level — built once, never rebuilt ───────────────────
 function build3DNodes(): SkillNode3D[] {
   const nodes: SkillNode3D[] = [];
 
-  // Spaced category coordinates on unit sphere
   const categoryCenters: Record<string, { x: number; y: number; z: number }> = {
     frontend: { x: 0.577, y: 0.577, z: 0.577 },
     backend: { x: -0.577, y: -0.577, z: 0.577 },
@@ -39,20 +26,16 @@ function build3DNodes(): SkillNode3D[] {
 
   skillCategories.forEach((cat) => {
     const center = categoryCenters[cat.id] || { x: 0, y: 0, z: 1 };
-    
-    // Orthogonal vectors tangent to the sphere surface at category center
     const cz = center;
     const temp = Math.abs(cz.x) > 0.9 ? { x: 0, y: 1, z: 0 } : { x: 1, y: 0, z: 0 };
-    
+
     const cx = {
       x: cz.y * temp.z - cz.z * temp.y,
       y: cz.z * temp.x - cz.x * temp.z,
       z: cz.x * temp.y - cz.y * temp.x,
     };
     const cxLen = Math.sqrt(cx.x * cx.x + cx.y * cx.y + cx.z * cx.z);
-    cx.x /= cxLen;
-    cx.y /= cxLen;
-    cx.z /= cxLen;
+    cx.x /= cxLen; cx.y /= cxLen; cx.z /= cxLen;
 
     const cy = {
       x: cz.y * cx.z - cz.z * cx.y,
@@ -64,14 +47,12 @@ function build3DNodes(): SkillNode3D[] {
       const angle = (si / cat.skills.length) * Math.PI * 2;
       const radius = 0.35 + (si % 2) * 0.12;
 
-      // Displacement around cluster center
       const nodeX = cz.x + (cx.x * Math.cos(angle) + cy.x * Math.sin(angle)) * radius;
       const nodeY = cz.y + (cx.y * Math.cos(angle) + cy.y * Math.sin(angle)) * radius;
       const nodeZ = cz.z + (cx.z * Math.cos(angle) + cy.z * Math.sin(angle)) * radius;
 
-      // Project back onto unit sphere surface
       const len = Math.sqrt(nodeX * nodeX + nodeY * nodeY + nodeZ * nodeZ);
-      
+
       nodes.push({
         name: skill.name,
         category: cat.id,
@@ -79,10 +60,6 @@ function build3DNodes(): SkillNode3D[] {
         x3d: nodeX / len,
         y3d: nodeY / len,
         z3d: nodeZ / len,
-        x: 50,
-        y: 50,
-        scale: 1,
-        opacity: 1
       });
     });
   });
@@ -90,40 +67,161 @@ function build3DNodes(): SkillNode3D[] {
   return nodes;
 }
 
-export function SkillsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-10%" });
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-  const [dragging, setDragging] = useState(false);
+// Compute connection pairs once at module load
+const STATIC_NODES = build3DNodes();
+const CONNECTION_PAIRS: Array<{ a: number; b: number; color: string }> = [];
+for (let i = 0; i < STATIC_NODES.length; i++) {
+  for (let j = i + 1; j < STATIC_NODES.length; j++) {
+    if (STATIC_NODES[i].category === STATIC_NODES[j].category) {
+      CONNECTION_PAIRS.push({ a: i, b: j, color: STATIC_NODES[i].color });
+    }
+  }
+}
 
-  // Refs for tracking 3D rotation coordinates
+const R = 34;
+const D = 2.2;
+
+// ─── Category Legend is static — wrap in memo so it never re-renders ────────
+const CategoryLegend = memo(function CategoryLegend({
+  hoveredCategory,
+  onHover,
+}: {
+  hoveredCategory: string | null;
+  onHover: (id: string | null) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="font-mono text-[8px] tracking-[0.3em] text-white/60 uppercase mb-8">
+        Categories
+      </div>
+      {skillCategories.map((cat) => (
+        <div
+          key={cat.id}
+          onMouseEnter={() => onHover(cat.id)}
+          onMouseLeave={() => onHover(null)}
+          className="group cursor-pointer"
+        >
+          <div className="flex items-center justify-between py-4 border-b border-white/[0.05] hover:border-white/10 transition-colors duration-300">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300"
+                style={{
+                  background: cat.color,
+                  boxShadow: hoveredCategory === cat.id ? `0 0 8px ${cat.color}` : "none"
+                }}
+              />
+              <span
+                className="font-sans text-sm transition-colors duration-300 font-medium"
+                style={{ color: hoveredCategory === cat.id ? cat.color : "rgba(255,255,255,0.85)" }}
+              >
+                {cat.label}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1 justify-end max-w-[160px]">
+              {cat.skills.map((skill, i) => (
+                <span key={skill.name} className="font-mono text-[8px] text-white/75 group-hover:text-white/95 transition-colors">
+                  {skill.name}{i < cat.skills.length - 1 ? ",\u00a0" : ""}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+});
+
+// ─── Imperative Globe — zero React state in the animation loop ───────────────
+function GlobeCanvas({
+  hoveredCategory,
+  hoveredNode,
+  onNodeHover,
+}: {
+  hoveredCategory: string | null;
+  hoveredNode: string | null;
+  onNodeHover: (node: string | null, cat: string | null) => void;
+}) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const lineEls = useRef<SVGLineElement[]>([]);
+  const circleEls = useRef<SVGCircleElement[]>([]);
+  const glowEls = useRef<SVGCircleElement[]>([]);
+  const textEls = useRef<SVGTextElement[]>([]);
+  const groupEls = useRef<SVGGElement[]>([]);
+
   const isDragging = useRef(false);
   const startMouse = useRef({ x: 0, y: 0 });
   const startRot = useRef({ x: 0, y: 0 });
-  const rotX = useRef(0.35); // initial default tilt
-  const rotY = useRef(0.45); // initial default spin
+  const rotX = useRef(0.35);
+  const rotY = useRef(0.45);
   const rotVelocity = useRef({ x: 0.0004, y: 0.0016 });
-  const initialNodes = useRef<SkillNode3D[]>([]);
+  const frameId = useRef(0);
 
-  // Setup client-side 3D render state
-  const [renderedNodes, setRenderedNodes] = useState<ProjectedNode[]>([]);
+  // Expose interaction state via refs to avoid closing over stale state
+  const hoveredCatRef = useRef(hoveredCategory);
+  const hoveredNodeRef = useRef(hoveredNode);
+  useEffect(() => { hoveredCatRef.current = hoveredCategory; }, [hoveredCategory]);
+  useEffect(() => { hoveredNodeRef.current = hoveredNode; }, [hoveredNode]);
 
-  // Perspective parameters
-  const R = 34; // Sphere radius in SVG space
-  const D = 2.2; // Camera distance
-
+  // Build SVG DOM imperatively once on mount
   useEffect(() => {
-    initialNodes.current = build3DNodes();
+    const svg = svgRef.current;
+    if (!svg) return;
 
-    let frameId: number;
+    // ── Lines ──────────────────────────────────────────────────────────────
+    const lineGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    CONNECTION_PAIRS.forEach(({ color }) => {
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("stroke", color);
+      line.setAttribute("stroke-width", "0.1");
+      line.setAttribute("stroke-opacity", "0.1");
+      lineGroup.appendChild(line);
+      lineEls.current.push(line);
+    });
+    svg.appendChild(lineGroup);
 
+    // ── Nodes ──────────────────────────────────────────────────────────────
+    const nodeGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    STATIC_NODES.forEach((node, i) => {
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.style.cursor = "pointer";
+
+      const glow = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      glow.setAttribute("fill", "none");
+      glow.setAttribute("stroke", node.color);
+      glow.setAttribute("stroke-width", "0.25");
+      glow.setAttribute("stroke-opacity", "0");
+      g.appendChild(glow);
+
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("fill", node.color);
+      g.appendChild(circle);
+
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("fill", "white");
+      text.setAttribute("font-family", "monospace");
+      text.style.pointerEvents = "none";
+      text.style.userSelect = "none";
+      text.textContent = node.name;
+      g.appendChild(text);
+
+      // Hover events on the group
+      g.addEventListener("mouseenter", () => onNodeHover(node.name, node.category));
+      g.addEventListener("mouseleave", () => onNodeHover(null, null));
+
+      nodeGroup.appendChild(g);
+      groupEls.current.push(g);
+      glowEls.current.push(glow);
+      circleEls.current.push(circle);
+      textEls.current.push(text);
+    });
+    svg.appendChild(nodeGroup);
+
+    // ── Animation loop — writes directly to DOM, zero React state ─────────
     const tick = () => {
-      // Automatic drift rotation in background
       if (!isDragging.current) {
         rotY.current += rotVelocity.current.y;
         rotX.current += rotVelocity.current.x;
-        // Slowly ease velocity back to dynamic drift speed
         rotVelocity.current.y += (0.0016 - rotVelocity.current.y) * 0.05;
         rotVelocity.current.x += (0.0004 - rotVelocity.current.x) * 0.05;
       }
@@ -133,76 +231,160 @@ export function SkillsSection() {
       const cosY = Math.cos(rotY.current);
       const sinY = Math.sin(rotY.current);
 
-      const projected = initialNodes.current.map((node) => {
-        // Rotate around X-axis
-        const y1 = node.y3d * cosX - node.z3d * sinX;
-        const z1 = node.y3d * sinX + node.z3d * cosX;
-        const x1 = node.x3d;
+      const hCat = hoveredCatRef.current;
+      const hNode = hoveredNodeRef.current;
+      const hasHover = !!(hCat || hNode);
 
-        // Rotate around Y-axis
-        const x2 = x1 * cosY + z1 * sinY;
-        const z2 = -x1 * sinY + z1 * cosY;
-        const y2 = y1;
+      // Project all nodes
+      const px = new Float32Array(STATIC_NODES.length);
+      const py = new Float32Array(STATIC_NODES.length);
+      const pz = new Float32Array(STATIC_NODES.length);
+      const pscale = new Float32Array(STATIC_NODES.length);
+      const popacity = new Float32Array(STATIC_NODES.length);
 
-        // 3D Perspective Projection
+      for (let i = 0; i < STATIC_NODES.length; i++) {
+        const n = STATIC_NODES[i];
+        const y1 = n.y3d * cosX - n.z3d * sinX;
+        const z1 = n.y3d * sinX + n.z3d * cosX;
+        const x2 = n.x3d * cosY + z1 * sinY;
+        const z2 = -n.x3d * sinY + z1 * cosY;
+
         const factor = D / (D - z2);
-        const x = 50 + x2 * R * factor;
-        const y = 50 + y2 * R * factor;
+        px[i] = 50 + x2 * R * factor;
+        py[i] = 50 + y1 * R * factor;
+        pz[i] = z2;
+        pscale[i] = factor;
+        popacity[i] = 0.15 + 0.85 * ((z2 + 1) / 2);
+      }
 
-        const scale = factor;
-        const opacity = 0.15 + 0.85 * ((z2 + 1) / 2);
+      // Update lines
+      for (let li = 0; li < CONNECTION_PAIRS.length; li++) {
+        const { a, b } = CONNECTION_PAIRS[li];
+        const line = lineEls.current[li];
+        line.setAttribute("x1", px[a].toFixed(2));
+        line.setAttribute("y1", py[a].toFixed(2));
+        line.setAttribute("x2", px[b].toFixed(2));
+        line.setAttribute("y2", py[b].toFixed(2));
 
-        return {
-          ...node,
-          x,
-          y,
-          z3d: z2,
-          scale,
-          opacity
-        };
-      });
+        const nodeA = STATIC_NODES[a];
+        const avgZ = (pz[a] + pz[b]) / 2;
+        const depthOpacity = 0.15 + 0.85 * ((avgZ + 1) / 2);
+        const isActive = hCat === nodeA.category || hNode === nodeA.name || hNode === STATIC_NODES[b].name;
+        const isDimmed = hasHover && !isActive;
+        const baseOpacity = isActive ? (hNode ? 0.7 : 0.4) : 0.1;
+        line.setAttribute("stroke-opacity", (isDimmed ? 0.02 : baseOpacity * depthOpacity).toFixed(3));
+        line.setAttribute("stroke-width", isActive ? "0.2" : "0.1");
+      }
 
-      setRenderedNodes(projected);
-      frameId = requestAnimationFrame(tick);
+      // Sort indices by depth for painter's algorithm
+      const sortedIdx = Array.from({ length: STATIC_NODES.length }, (_, i) => i)
+        .sort((a, b) => pz[a] - pz[b]);
+
+      // Reorder node DOM elements by depth
+      const nodeGroup = groupEls.current[0]?.parentElement;
+      if (nodeGroup) {
+        sortedIdx.forEach(i => nodeGroup.appendChild(groupEls.current[i]));
+      }
+
+      // Update node DOM attributes
+      for (let i = 0; i < STATIC_NODES.length; i++) {
+        const node = STATIC_NODES[i];
+        const isNodeHovered = hNode === node.name;
+        const isCatHovered = hCat === node.category;
+        const isActive = isNodeHovered || isCatHovered;
+        const isDimmed = hasHover && !isActive;
+        const dotRadius = (isNodeHovered ? 1.4 : isActive ? 1.0 : 0.7) * pscale[i];
+        const finalOpacity = isDimmed ? 0.15 : popacity[i];
+        const showLabel = isNodeHovered || (pz[i] > 0.15 && !isDimmed);
+
+        const circle = circleEls.current[i];
+        circle.setAttribute("cx", px[i].toFixed(2));
+        circle.setAttribute("cy", py[i].toFixed(2));
+        circle.setAttribute("r", dotRadius.toFixed(3));
+        circle.setAttribute("fill-opacity", finalOpacity.toFixed(3));
+
+        const glow = glowEls.current[i];
+        glow.setAttribute("cx", px[i].toFixed(2));
+        glow.setAttribute("cy", py[i].toFixed(2));
+        glow.setAttribute("r", (dotRadius * 1.8).toFixed(3));
+        glow.setAttribute("stroke-opacity", isActive ? (isNodeHovered ? "0.5" : "0.25") : "0");
+
+        const text = textEls.current[i];
+        if (showLabel) {
+          text.setAttribute("x", px[i].toFixed(2));
+          text.setAttribute("y", (py[i] - dotRadius - 1.2).toFixed(2));
+          text.setAttribute("font-size", isNodeHovered ? "2.2" : "1.7");
+          text.setAttribute("fill-opacity", isNodeHovered ? "1" : (0.7 * ((pz[i] + 1) / 2)).toFixed(3));
+          text.style.display = "";
+        } else {
+          text.style.display = "none";
+        }
+      }
+
+      frameId.current = requestAnimationFrame(tick);
     };
 
-    tick();
+    frameId.current = requestAnimationFrame(tick);
 
+    // Drag handlers
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current) return;
-      const deltaX = e.clientX - startMouse.current.x;
-      const deltaY = e.clientY - startMouse.current.y;
-
-      rotVelocity.current = {
-        x: -deltaY * 0.0003,
-        y: deltaX * 0.0003
-      };
-
-      rotX.current = startRot.current.x - deltaY * 0.005;
-      rotY.current = startRot.current.y + deltaX * 0.005;
+      const dx = e.clientX - startMouse.current.x;
+      const dy = e.clientY - startMouse.current.y;
+      rotVelocity.current = { x: -dy * 0.0003, y: dx * 0.0003 };
+      rotX.current = startRot.current.x - dy * 0.005;
+      rotY.current = startRot.current.y + dx * 0.005;
     };
-
-    const handleMouseUp = () => {
-      isDragging.current = false;
-      setDragging(false);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
+    const handleMouseUp = () => { isDragging.current = false; };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     window.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      cancelAnimationFrame(frameId);
+      cancelAnimationFrame(frameId.current);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      // Clear DOM refs
+      lineEls.current = [];
+      circleEls.current = [];
+      glowEls.current = [];
+      textEls.current = [];
+      groupEls.current = [];
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseDown = (e: React.MouseEvent<SVGSVGElement>) => {
     isDragging.current = true;
-    setDragging(true);
     startMouse.current = { x: e.clientX, y: e.clientY };
     startRot.current = { x: rotX.current, y: rotY.current };
   };
+
+  return (
+    <svg
+      ref={svgRef}
+      className="absolute inset-0 w-full h-full p-4"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="xMidYMid meet"
+      onMouseDown={handleMouseDown}
+    />
+  );
+}
+
+export function SkillsSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-10%" });
+  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const handleNodeHover = useCallback((node: string | null, cat: string | null) => {
+    setHoveredNode(node);
+    setHoveredCategory(cat);
+  }, []);
+
+  const handleCategoryHover = useCallback((id: string | null) => {
+    setHoveredCategory(id);
+  }, []);
 
   return (
     <section
@@ -246,13 +428,14 @@ export function SkillsSection() {
         </div>
 
         <div className="grid lg:grid-cols-[1fr_320px] gap-16 items-center">
-          {/* Interactive Constellation 3D Globe */}
+          {/* Interactive 3D Globe — imperative SVG, zero state in animation loop */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 1.2, delay: 0.2 }}
-            onMouseDown={handleMouseDown}
             style={{ cursor: dragging ? "grabbing" : "grab" }}
+            onMouseDown={() => setDragging(true)}
+            onMouseUp={() => setDragging(false)}
             className="relative aspect-square max-w-2xl rounded-2xl border border-white/[0.06] bg-white/[0.015] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.65),inset_0_1px_0_0_rgba(255,255,255,0.08)] overflow-hidden select-none"
           >
             {/* Grid background */}
@@ -264,167 +447,30 @@ export function SkillsSection() {
               }}
             />
 
-            <svg className="absolute inset-0 w-full h-full p-4" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-              {/* 3D Depth-sorted Connection Lines */}
-              {renderedNodes.map((node) =>
-                renderedNodes
-                  .filter((other) => other.category === node.category && other.name > node.name)
-                  .map((other) => {
-                    const isGroupHovered = hoveredCategory === node.category;
-                    const isNodeHovered = hoveredNode === node.name || hoveredNode === other.name;
-                    const isActive = isGroupHovered || isNodeHovered;
-                    const isDimmed = (hoveredCategory || hoveredNode) && !isActive;
+            <GlobeCanvas
+              hoveredCategory={hoveredCategory}
+              hoveredNode={hoveredNode}
+              onNodeHover={handleNodeHover}
+            />
 
-                    const avgZ = (node.z3d + other.z3d) / 2;
-                    const depthOpacity = 0.15 + 0.85 * ((avgZ + 1) / 2);
-
-                    const baseOpacity = isNodeHovered ? 0.7 : isGroupHovered ? 0.4 : 0.1;
-                    const finalOpacity = isDimmed ? 0.02 : baseOpacity * depthOpacity;
-
-                    return (
-                      <line
-                        key={`line-${node.name}-${other.name}`}
-                        x1={node.x}
-                        y1={node.y}
-                        x2={other.x}
-                        y2={other.y}
-                        stroke={node.color}
-                        strokeWidth={isActive ? "0.2" : "0.1"}
-                        strokeOpacity={finalOpacity}
-                        style={{
-                          transition: "stroke-opacity 0.3s, stroke-width 0.3s",
-                        }}
-                      />
-                    );
-                  })
-              )}
-
-              {/* 3D Depth-sorted Nodes */}
-              {[...renderedNodes]
-                .sort((a, b) => a.z3d - b.z3d)
-                .map((node) => {
-                  const isCatHovered = hoveredCategory === node.category;
-                  const isNodeHovered = hoveredNode === node.name;
-                  const isActive = isCatHovered || isNodeHovered;
-                  const isDimmed = (hoveredCategory || hoveredNode) && !isActive;
-
-                  const dotRadius = (isNodeHovered ? 1.4 : isActive ? 1.0 : 0.7) * node.scale;
-                  const finalOpacity = isDimmed ? 0.15 : node.opacity;
-
-                  return (
-                    <g
-                      key={`node-${node.name}`}
-                      onMouseEnter={() => {
-                        setHoveredNode(node.name);
-                        setHoveredCategory(node.category);
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredNode(null);
-                        setHoveredCategory(null);
-                      }}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {/* Outer glow ring on hover */}
-                      {isActive && (
-                        <circle
-                          cx={node.x}
-                          cy={node.y}
-                          r={dotRadius * 1.8}
-                          fill="none"
-                          stroke={node.color}
-                          strokeWidth="0.25"
-                          strokeOpacity={isNodeHovered ? 0.5 : 0.25}
-                        />
-                      )}
-                      {/* Core dot */}
-                      <circle
-                        cx={node.x}
-                        cy={node.y}
-                        r={dotRadius}
-                        fill={node.color}
-                        fillOpacity={finalOpacity}
-                        style={{ transition: "fill-opacity 0.3s" }}
-                      />
-                      {/* Label - fade and scale with depth */}
-                      {(isNodeHovered || (node.z3d > 0.15 && !isDimmed)) && (
-                        <text
-                          x={node.x}
-                          y={node.y - dotRadius - 1.2}
-                          textAnchor="middle"
-                          fontSize={isNodeHovered ? "2.2" : "1.7"}
-                          fill="white"
-                          fillOpacity={isNodeHovered ? 1.0 : 0.7 * ((node.z3d + 1) / 2)}
-                          fontFamily="monospace"
-                          style={{
-                            pointerEvents: "none",
-                            userSelect: "none",
-                            transition: "fill-opacity 0.3s, font-size 0.2s"
-                          }}
-                        >
-                          {node.name}
-                        </text>
-                      )}
-                    </g>
-                  );
-                })}
-            </svg>
-
-            {/* Drag to spin tip overlay */}
+            {/* Drag tip */}
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between pointer-events-none opacity-40">
               <span className="font-mono text-[6px] tracking-[0.25em] uppercase text-white">Interactive 3D Sphere</span>
-              <span className="font-mono text-[6px] tracking-[0.25em] uppercase text-white">Click & Drag to Spin</span>
+              <span className="font-mono text-[6px] tracking-[0.25em] uppercase text-white">Click &amp; Drag to Spin</span>
             </div>
           </motion.div>
 
-          {/* Category legend */}
-          <div className="space-y-4">
-            <div className="font-mono text-[8px] tracking-[0.3em] text-white/60 uppercase mb-8">
-              Categories
-            </div>
-            {skillCategories.map((cat, i) => (
-              <motion.div
-                key={cat.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.7, delay: 0.3 + i * 0.08 }}
-                onMouseEnter={() => setHoveredCategory(cat.id)}
-                onMouseLeave={() => setHoveredCategory(null)}
-                className="group cursor-pointer"
-              >
-                <div className="flex items-center justify-between py-4 border-b border-white/[0.05] hover:border-white/10 transition-colors duration-300">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-1.5 h-1.5 rounded-full flex-shrink-0 transition-all duration-300"
-                      style={{
-                        background: cat.color,
-                        boxShadow: hoveredCategory === cat.id ? `0 0 8px ${cat.color}` : "none"
-                      }}
-                    />
-                    <span
-                      className="font-sans text-sm transition-colors duration-300 font-medium"
-                      style={{ color: hoveredCategory === cat.id ? cat.color : "rgba(255,255,255,0.85)" }}
-                    >
-                      {cat.label}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1 justify-end max-w-[160px]">
-                    {cat.skills.map(skill => (
-                      <span
-                        key={skill.name}
-                        className="font-mono text-[8px] text-white/75 group-hover:text-white/95 transition-colors"
-                      >
-                        {skill.name}
-                      </span>
-                    )).reduce((acc, el, i, arr) => (
-                      i < arr.length - 1
-                        ? [...acc, el, <span key={`sep-${i}`} className="text-white/15">,&nbsp;</span>]
-                        : [...acc, el]
-                    ), [] as React.ReactNode[])}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {/* Category legend — memoized, never re-renders from the animation loop */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <CategoryLegend
+              hoveredCategory={hoveredCategory}
+              onHover={handleCategoryHover}
+            />
+          </motion.div>
         </div>
       </div>
     </section>

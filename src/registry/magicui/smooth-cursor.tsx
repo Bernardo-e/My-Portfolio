@@ -5,13 +5,11 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export interface SmoothCursorProps {
   size?: number;
-  color?: string;
   className?: string;
 }
 
 export function SmoothCursor({
   size = 20,
-  color = "rgba(14, 165, 233, 0.4)", // matching electric blue secondary theme
   className = "",
 }: SmoothCursorProps) {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -20,43 +18,37 @@ export function SmoothCursor({
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const springConfig = { damping: 30, stiffness: 280, mass: 0.6 };
+  // Tight spring — fast enough to feel instant, loose enough to look smooth
+  const springConfig = { damping: 32, stiffness: 300, mass: 0.5 };
   const smoothX = useSpring(cursorX, springConfig);
   const smoothY = useSpring(cursorY, springConfig);
 
   useEffect(() => {
     setIsMounted(true);
-    
-    const checkTouch = () => {
-      setIsTouchDevice(
-        window.matchMedia("(pointer: coarse)").matches ||
-        "ontouchstart" in window ||
-        navigator.maxTouchPoints > 0
-      );
-    };
 
-    checkTouch();
-    if (isTouchDevice) return;
+    const isTouchCheck =
+      window.matchMedia("(pointer: coarse)").matches ||
+      "ontouchstart" in window ||
+      navigator.maxTouchPoints > 0;
 
-    // Set cursor: none globally when active on desktop
-    const style = document.createElement("style");
-    style.innerHTML = "* { cursor: none !important; }";
-    document.head.appendChild(style);
+    setIsTouchDevice(isTouchCheck);
+    if (isTouchCheck) return;
+
+    // Set data attribute on <html> — the actual cursor:none is in globals.css
+    document.documentElement.setAttribute("data-smooth-cursor", "true");
 
     const handleMouseMove = (e: MouseEvent) => {
       cursorX.set(e.clientX - size / 2);
       cursorY.set(e.clientY - size / 2);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     return () => {
-      if (document.head.contains(style)) {
-        document.head.removeChild(style);
-      }
+      document.documentElement.removeAttribute("data-smooth-cursor");
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [cursorX, cursorY, size, isTouchDevice]);
+  }, [cursorX, cursorY, size]);
 
   if (!isMounted || isTouchDevice) return null;
 
@@ -66,10 +58,11 @@ export function SmoothCursor({
       style={{
         width: size,
         height: size,
-        borderColor: color,
+        borderColor: "rgba(14, 165, 233, 0.55)",
         x: smoothX,
         y: smoothY,
-        boxShadow: "0 0 12px rgba(14, 165, 233, 0.3)",
+        willChange: "transform",
+        boxShadow: "0 0 10px rgba(14, 165, 233, 0.25)",
       }}
     />
   );
