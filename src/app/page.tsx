@@ -64,7 +64,7 @@ export default function Home() {
   return (
     <>
       {/* Premium Smooth Physics Cursor */}
-      <div className={cn("transition-opacity duration-[1000ms] pointer-events-none relative z-[300]", isIntroComplete ? "opacity-100" : "opacity-0")}>
+      <div className={cn("transition-opacity duration-[1000ms] pointer-events-none fixed z-[9999]", isIntroComplete ? "opacity-100" : "opacity-0")}>
         <SmoothCursor />
       </div>
 

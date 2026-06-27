@@ -132,11 +132,6 @@
     scrollbar-color: var(--border) transparent;
   }
 
-  /* Hide default cursor when SmoothCursor is active on desktop */
-  [data-smooth-cursor] * {
-    cursor: none !important;
-  }
-
   /* GPU layer promotion — layout style is cheaper than paint layout */
   section {
     contain: layout style;

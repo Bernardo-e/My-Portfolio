@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export interface SmoothCursorProps {
@@ -14,11 +14,11 @@ export function SmoothCursor({
 }: SmoothCursorProps) {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const styleRef = useRef<HTMLStyleElement | null>(null);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  // Tight spring — fast enough to feel instant, loose enough to look smooth
   const springConfig = { damping: 32, stiffness: 300, mass: 0.5 };
   const smoothX = useSpring(cursorX, springConfig);
   const smoothY = useSpring(cursorY, springConfig);
@@ -34,8 +34,11 @@ export function SmoothCursor({
     setIsTouchDevice(isTouchCheck);
     if (isTouchCheck) return;
 
-    // Set data attribute on <html> — the actual cursor:none is in globals.css
-    document.documentElement.setAttribute("data-smooth-cursor", "true");
+    // Inject cursor:none via a style tag (original approach)
+    const style = document.createElement("style");
+    style.textContent = "*, *::before, *::after { cursor: none !important; }";
+    document.head.appendChild(style);
+    styleRef.current = style;
 
     const handleMouseMove = (e: MouseEvent) => {
       cursorX.set(e.clientX - size / 2);
@@ -45,7 +48,10 @@ export function SmoothCursor({
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     return () => {
-      document.documentElement.removeAttribute("data-smooth-cursor");
+      if (styleRef.current) {
+        document.head.removeChild(styleRef.current);
+        styleRef.current = null;
+      }
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [cursorX, cursorY, size]);
