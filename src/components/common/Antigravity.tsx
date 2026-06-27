@@ -163,6 +163,8 @@ const AntigravityInner = ({
 
     const globalRotation = state.clock.getElapsedTime() * rotationSpeed;
 
+    const magnetRadiusSq = magnetRadius * magnetRadius;
+
     particles.forEach((particle, i) => {
       let { speed, mx, my, mz, cz, randomRadiusOffset } = particle;
 
@@ -174,11 +176,12 @@ const AntigravityInner = ({
 
       const dx = mx - projectedTargetX;
       const dy = my - projectedTargetY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const distSq = dx * dx + dy * dy;
 
       const targetPos = { x: mx, y: my, z: mz * depthFactor };
 
-      if (dist < magnetRadius) {
+      if (distSq < magnetRadiusSq) {
+        const dist = Math.sqrt(distSq);
         const angle = Math.atan2(dy, dx) + globalRotation;
 
         const wave = Math.sin(t * waveSpeed + angle) * (0.5 * waveAmplitude);
@@ -199,18 +202,19 @@ const AntigravityInner = ({
 
       const dxLook = projectedTargetX - particle.cx;
       const dyLook = projectedTargetY - particle.cy;
-      const distLook = Math.sqrt(dxLook * dxLook + dyLook * dyLook);
+      const distLookSq = dxLook * dxLook + dyLook * dyLook;
 
-      if (distLook > 0.001) {
+      if (distLookSq > 0.0001) {
         dummy.lookAt(projectedTargetX, projectedTargetY, particle.cz);
         dummy.rotateX(Math.PI / 2);
       } else {
         dummy.rotation.set(0, 0, 0);
       }
 
-      const currentDistToMouse = Math.sqrt(
-        Math.pow(particle.cx - projectedTargetX, 2) + Math.pow(particle.cy - projectedTargetY, 2)
-      );
+      const dxMouse = particle.cx - projectedTargetX;
+      const dyMouse = particle.cy - projectedTargetY;
+      const distToMouseSq = dxMouse * dxMouse + dyMouse * dyMouse;
+      const currentDistToMouse = Math.sqrt(distToMouseSq);
 
       const distFromRing = Math.abs(currentDistToMouse - ringRadius);
       let scaleFactor = 1 - distFromRing / 10;

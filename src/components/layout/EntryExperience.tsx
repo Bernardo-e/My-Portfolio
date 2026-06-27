@@ -209,30 +209,6 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
     let time = 0;
     let autoPulseTimer = 0;
 
-    // Draw background atmosphere glow
-    const drawAtmosphere = (t: number) => {
-      const centerX = width / 2;
-      const centerY = height / 2;
-      
-      const pulseAmp = Math.sin(t * 0.0008) * 0.02 + 1.0;
-      const radGrad = ctx.createRadialGradient(
-        centerX,
-        centerY,
-        0,
-        centerX,
-        centerY,
-        Math.min(width, height) * 0.5 * pulseAmp
-      );
-
-      radGrad.addColorStop(0, "rgba(10, 32, 85, 0.45)"); // Midnight blue core
-      radGrad.addColorStop(0.45, "rgba(8, 20, 60, 0.2)"); // Soft dark blue wrap
-      radGrad.addColorStop(0.75, "rgba(65, 12, 100, 0.08)"); // Soft purple highlights
-      radGrad.addColorStop(1, "rgba(0, 0, 0, 0)"); // Fades to complete black
-
-      ctx.fillStyle = radGrad;
-      ctx.fillRect(0, 0, width, height);
-    };
-
     const render = () => {
       time += 16.7; // Approx ms per frame at 60fps
       
@@ -270,11 +246,8 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
         return;
       }
 
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, width, height);
-
-      // Draw background ambient color glow
-      drawAtmosphere(time);
+      // High-performance canvas clear (avoid solid fillRect which forces full-screen pixel redraw)
+      ctx.clearRect(0, 0, width, height);
 
       // Smoothly interpolate hover attraction factor
       hoverProgRef.current += ((mouse.hoveringButton ? 1.0 : 0.0) - hoverProgRef.current) * 0.08;
@@ -601,7 +574,7 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-50 overflow-hidden bg-black select-none cursor-default transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${containerTransitionClasses}`}
+      className={`fixed inset-0 z-50 overflow-hidden bg-black bg-[radial-gradient(circle_at_center,rgba(10,32,85,0.45)_0%,rgba(8,20,60,0.2)_45%,rgba(65,12,100,0.08)_75%,rgba(0,0,0,0)_100%)] select-none cursor-default transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${containerTransitionClasses}`}
     >
       {/* Inject custom high-performance cybernetic keyframe animations */}
       <style dangerouslySetInnerHTML={{
@@ -637,7 +610,7 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
       {/* 1. WebGL Antigravity 3D Background */}
       <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
         <Antigravity
-          count={320}
+          count={120}
           magnetRadius={magnetRadius}
           ringRadius={ringRadius}
           waveSpeed={0.3}

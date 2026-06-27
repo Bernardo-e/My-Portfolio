@@ -122,19 +122,21 @@ export default function Home() {
           {/* Floating navigation */}
           <Navigation visible={isIntroComplete} />
 
-          {/* All portfolio sections — bg-transparent so rain shows through */}
-          <main className="relative z-10">
-            <HeroSection />
-            <HighlightsSection />
-            <AboutSection />
-            <SkillsSection />
-            <ProjectsSection />
-            <AchievementsSection />
-            <FocusSection />
-            <VisionSection />
-            <ContactSection onOpenResume={() => setIsResumeOpen(true)} />
-            <Footer />
-          </main>
+          {/* All portfolio sections — bg-transparent so rain shows through — deferred until intro completes */}
+          {isIntroComplete && (
+            <main className="relative z-10">
+              <HeroSection />
+              <HighlightsSection />
+              <AboutSection />
+              <SkillsSection />
+              <ProjectsSection />
+              <AchievementsSection />
+              <FocusSection />
+              <VisionSection />
+              <ContactSection onOpenResume={() => setIsResumeOpen(true)} />
+              <Footer />
+            </main>
+          )}
         </LenisProvider>
       </div>
 
