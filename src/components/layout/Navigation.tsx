@@ -242,11 +242,11 @@ export function Navigation({ visible = true }: NavigationProps) {
           </ul>
 
           {/* Right CTA & Resume Download */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <a
               href="/Bernardo_Resume.pdf"
               download="Bernardo_Resume.pdf"
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-sky-400/40 transition-all duration-300 group"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-sky-400/40 transition-all duration-300 group"
               style={{ textDecoration: 'none' }}
             >
               <svg className="w-3 h-3 text-sky-400 group-hover:translate-y-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -256,9 +256,10 @@ export function Navigation({ visible = true }: NavigationProps) {
             </a>
             <a
               href="mailto:narded2007@gmail.com"
-              className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
+              className="flex items-center justify-center p-1.5 sm:p-0 font-mono text-[9px] tracking-[0.25em] uppercase text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
             >
-              narded2007@gmail.com
+              <Mail size={13} className="inline sm:hidden text-white/70 hover:text-white" />
+              <span className="hidden sm:inline">narded2007@gmail.com</span>
             </a>
           </div>
         </motion.nav>

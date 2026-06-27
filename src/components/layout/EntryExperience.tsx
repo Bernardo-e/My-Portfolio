@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 import { soundSynth } from "../../utils/SoundSynth";
 import { useMounted } from "../../hooks/use-mounted";
 
+// Dynamically import the browser-only React Three Fiber WebGL component to bypass hydration errors
+const Antigravity = dynamic(() => import("../common/Antigravity"), { ssr: false });
 
 type ExperienceStatus =
   | "idle" // darkness, sparse trails falling, WebGL drifting, CTA standing by
@@ -502,6 +504,70 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
     return <div className="fixed inset-0 z-50 bg-black" />;
   }
 
+  // Determine dynamic parameters for WebGL Antigravity particle vortex (using capsule/line particles)
+  let magnetRadius = 0;
+  let ringRadius = 0;
+  let waveAmplitude = 0.5;
+  let particleSize = 0.9;
+  let lerpSpeed = 0.03;
+  let particleColor = "#8b5cf6"; // Elegant purple color matching the reference image
+
+  if (status === "idle") {
+    if (isHoveringButton) {
+      magnetRadius = 16;
+      ringRadius = 6.0;
+      waveAmplitude = 2.0;
+      particleSize = 1.3;
+      particleColor = "#a78bfa"; // lighter purple on hover
+      lerpSpeed = 0.06;
+    } else {
+      // Particles follow the cursor with a beautiful swirling ring
+      magnetRadius = 14;
+      ringRadius = 7.0;
+      waveAmplitude = 1.0;
+      particleSize = 1.1;
+      particleColor = "#8b5cf6"; // elegant violet/purple
+      lerpSpeed = 0.04;
+    }
+  } else if (status === "triggering") {
+    magnetRadius = 24;
+    ringRadius = 15.0;
+    waveAmplitude = 3.0;
+    particleSize = 1.6;
+    particleColor = "#c084fc"; // lavender burst
+    lerpSpeed = 0.08;
+  } else if (status === "playing") {
+    if (playPhase === "init") {
+      magnetRadius = 18;
+      ringRadius = 3.5;
+      waveAmplitude = 1.0;
+      particleSize = 1.4;
+      particleColor = "#8b5cf6";
+      lerpSpeed = 0.06;
+    } else if (playPhase === "burst") {
+      magnetRadius = 26;
+      ringRadius = 14.0;
+      waveAmplitude = 1.5;
+      particleSize = 1.2;
+      particleColor = "#a78bfa";
+      lerpSpeed = 0.065;
+    } else if (playPhase === "shrink") {
+      magnetRadius = 26;
+      ringRadius = 0.2;
+      waveAmplitude = 0.1;
+      particleSize = 0.8;
+      particleColor = "#7c3aed";
+      lerpSpeed = 0.04;
+    }
+  } else if (status === "transitioning") {
+    magnetRadius = 26;
+    ringRadius = 32.0;
+    waveAmplitude = 1.0;
+    particleSize = 0.6;
+    particleColor = "#6d28d9";
+    lerpSpeed = 0.03;
+  }
+
 
 
   // Camera pushes forward and opacity fades out on transitions
@@ -542,6 +608,27 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
           }
         `
       }} />
+
+      {/* 1. WebGL Antigravity 3D Background (using capsule geometry to form lines/dashes like the reference image) */}
+      <div className="absolute inset-0 z-0 opacity-55 mix-blend-screen pointer-events-none">
+        <Antigravity
+          count={260}
+          magnetRadius={magnetRadius}
+          ringRadius={ringRadius}
+          waveSpeed={0.3}
+          waveAmplitude={waveAmplitude}
+          particleSize={particleSize}
+          lerpSpeed={lerpSpeed}
+          color={particleColor}
+          autoAnimate={false}
+          particleVariance={0.8}
+          rotationSpeed={0.06}
+          depthFactor={0.5}
+          pulseSpeed={2.5}
+          particleShape="capsule"
+          fieldStrength={8}
+        />
+      </div>
 
       {/* 2. Core Interactive Canvas */}
       <canvas
