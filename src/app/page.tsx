@@ -65,13 +65,8 @@ export default function Home() {
 
   return (
     <>
-      {/* Premium WebGL Fluid Splash Cursor & Smooth Cursor — only active after intro is complete */}
-      {isIntroComplete && (
-        <>
-          <SplashCursor />
-          <SmoothCursor />
-        </>
-      )}
+      {/* WebGL Fluid Splash Cursor — active after intro */}
+      {isIntroComplete && <SplashCursor />}
 
       {/* Intro experience */}
       {!isIntroComplete && (

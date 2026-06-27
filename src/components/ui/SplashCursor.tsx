@@ -45,11 +45,6 @@ export default function SplashCursor({
     const canvas = canvasRef.current as HTMLCanvasElement;
     if (!canvas) return;
 
-    // Hide default system cursor
-    const style = document.createElement('style');
-    style.textContent = '*, *::before, *::after { cursor: none !important; }';
-    document.head.appendChild(style);
-
     let isActive = true;
 
     function pointerPrototype(this: any) {
@@ -669,7 +664,6 @@ export default function SplashCursor({
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
-      document.head.removeChild(style);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
