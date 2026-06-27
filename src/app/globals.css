@@ -124,6 +124,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    overscroll-behavior: none;
   }
 
   html {
@@ -135,6 +136,13 @@
   /* GPU layer promotion — layout style is cheaper than paint layout */
   section {
     contain: layout style;
+  }
+
+  /* Promote fixed WebGL canvas overlays to own GPU composite layers */
+  canvas#fluid,
+  canvas[data-engine] {
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   /* Custom Premium Scrollbar for Webkit */

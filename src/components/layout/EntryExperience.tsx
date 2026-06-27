@@ -288,18 +288,18 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
       const btnY = height / 2;
 
       // Update and draw massive click/activation spark eruption
-      sparksRef.current.forEach((s) => {
+      const sparksToRemove: number[] = [];
+      sparksRef.current.forEach((s, si) => {
         const prevX = s.x;
         const prevY = s.y;
         
-        s.vx *= 0.97; // air resistance dampening
+        s.vx *= 0.97;
         s.vy *= 0.97;
         s.x += s.vx;
         s.y += s.vy;
         s.alpha -= s.decay;
 
         if (s.alpha > 0) {
-          // Render spark trails relative to camera zoom anchor
           const sxStart = btnX + (prevX - btnX) * zoom;
           const syStart = btnY + (prevY - btnY) * zoom;
           const sxEnd = btnX + (s.x - btnX) * zoom;
@@ -310,14 +310,21 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
           ctx.lineTo(sxEnd, syEnd);
           ctx.lineWidth = s.size * (1.0 + (zoom - 1.0) * 0.5);
           ctx.strokeStyle = s.color + `${s.alpha})`;
-          ctx.shadowColor = s.color.includes("14,") ? "rgba(14, 165, 233, 0.8)" : "rgba(168, 85, 247, 0.8)";
-          ctx.shadowBlur = 6;
+          // Only draw glow on every 3rd spark — shadowBlur is very expensive
+          if (si % 3 === 0) {
+            ctx.shadowColor = s.color.includes("14,") ? "rgba(14, 165, 233, 0.8)" : "rgba(168, 85, 247, 0.8)";
+            ctx.shadowBlur = 6;
+          }
           ctx.stroke();
-          ctx.shadowBlur = 0; // reset
+          if (si % 3 === 0) ctx.shadowBlur = 0;
+        } else {
+          sparksToRemove.push(si);
         }
       });
-      // Clear dead sparks
-      sparksRef.current = sparksRef.current.filter((s) => s.alpha > 0);
+      // Clear dead sparks (reverse splice to maintain indices)
+      for (let i = sparksToRemove.length - 1; i >= 0; i--) {
+        sparksRef.current.splice(sparksToRemove[i], 1);
+      }
 
       // Handle auto pulses during Active state
       if (curStatus === "idle") {
@@ -447,13 +454,10 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
             ctx.lineTo(trail.points[k].x, trail.points[k].y);
           }
 
-          // Glowing electric-white pulse
-          ctx.strokeStyle = "rgba(224, 242, 254, 0.95)";
-          ctx.lineWidth = trail.width + 1.8;
-          ctx.shadowColor = "rgba(14, 165, 233, 0.85)";
-          ctx.shadowBlur = 10;
+          // Glowing electric-white pulse — no shadowBlur for perf (use bright color instead)
+          ctx.strokeStyle = "rgba(224, 242, 254, 0.98)";
+          ctx.lineWidth = trail.width + 2.2;
           ctx.stroke();
-          ctx.shadowBlur = 0; // reset for performance
         }
       });
 

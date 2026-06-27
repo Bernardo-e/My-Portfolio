@@ -65,8 +65,18 @@ export default function Home() {
 
   return (
     <>
-      {/* WebGL Fluid Splash Cursor — active after intro */}
-      {isIntroComplete && <SplashCursor />}
+      {/* WebGL Fluid Splash Cursor — active after intro, perf-tuned resolutions */}
+      {isIntroComplete && (
+        <SplashCursor
+          SIM_RESOLUTION={64}
+          DYE_RESOLUTION={512}
+          PRESSURE_ITERATIONS={8}
+          DENSITY_DISSIPATION={4}
+          VELOCITY_DISSIPATION={2.5}
+          SPLAT_RADIUS={0.18}
+          CURL={2}
+        />
+      )}
 
       {/* Intro experience */}
       {!isIntroComplete && (
