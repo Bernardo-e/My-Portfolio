@@ -241,13 +241,26 @@ export function Navigation({ visible = true }: NavigationProps) {
             })}
           </ul>
 
-          {/* Right CTA */}
-          <a
-            href="mailto:narded2007@gmail.com"
-            className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
-          >
-            narded2007@gmail.com
-          </a>
+          {/* Right CTA & Resume Download */}
+          <div className="flex items-center gap-6">
+            <a
+              href="/Bernardo_Resume.pdf"
+              download="Bernardo_Resume.pdf"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-sky-400/40 transition-all duration-300 group"
+              style={{ textDecoration: 'none' }}
+            >
+              <svg className="w-3 h-3 text-sky-400 group-hover:translate-y-0.5 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              <span className="text-[8px] font-mono tracking-[0.15em] uppercase text-white/80 group-hover:text-sky-300 transition-colors duration-200">Resume</span>
+            </a>
+            <a
+              href="mailto:narded2007@gmail.com"
+              className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/70 hover:text-white transition-colors duration-300 cursor-pointer"
+            >
+              narded2007@gmail.com
+            </a>
+          </div>
         </motion.nav>
       )}
     </AnimatePresence>
