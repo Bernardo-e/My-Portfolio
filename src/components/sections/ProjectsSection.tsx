@@ -286,13 +286,44 @@ export function ProjectsSection() {
               style={{ touchAction: "pan-y", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedProject(null)}
-                className="absolute top-6 right-6 font-mono text-[9px] text-white/70 hover:text-white transition-colors cursor-pointer border border-white/10 hover:border-white/20 px-3 py-1.5 rounded bg-white/[0.02]"
-              >
-                ESC // CLOSE
-              </button>
+              {/* Top Action Bar */}
+              <div className="absolute top-6 right-6 flex items-center gap-2 flex-wrap sm:flex-nowrap max-w-[80%] sm:max-w-none justify-end z-20">
+                {selectedProject.links.github && (
+                  <a
+                    href={selectedProject.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[9px] tracking-wider text-white/80 hover:text-white transition-colors cursor-pointer border border-white/10 hover:border-white/25 px-2.5 py-1.5 rounded bg-white/[0.02] flex items-center gap-1"
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80">
+                      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                    </svg>
+                    GITHUB
+                  </a>
+                )}
+                {selectedProject.links.live && (
+                  <a
+                    href={selectedProject.links.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[9px] tracking-wider text-black font-semibold transition-opacity hover:opacity-90 cursor-pointer px-2.5 py-1.5 rounded flex items-center gap-1"
+                    style={{ backgroundColor: activePalette.accent }}
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                      <polyline points="15 3 21 3 21 9" />
+                      <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                    DEMO
+                  </a>
+                )}
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="font-mono text-[9px] text-white/50 hover:text-white transition-colors cursor-pointer border border-white/10 hover:border-white/20 px-2.5 py-1.5 rounded bg-white/[0.01]"
+                >
+                  CLOSE [X]
+                </button>
+              </div>
 
               {/* Glowing Background Radial Blur */}
               <div
