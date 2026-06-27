@@ -168,8 +168,8 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
     window.addEventListener("mousemove", handleGlobalMouseMove);
     window.addEventListener("mouseleave", handleGlobalMouseLeave);
 
-    const numPointsPerTrail = 16;
-    const numTrails = 12;
+    const numPointsPerTrail = 20;
+    const numTrails = 16;
 
     // Colors mapping to creative direction
     const trailColors = [
@@ -179,7 +179,7 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
       "rgba(0, 229, 255, 0.4)" // Vivid electric blue
     ];
 
-    // Initialize 12 light trails
+    // Initialize 16 light trails
     const trails: Trail[] = Array.from({ length: numTrails }, (_, i) => {
       const relX = i / (numTrails - 1);
       
@@ -194,8 +194,8 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
         wavePhase: Math.random() * Math.PI * 2,
         waveSpeed: 0.6 + Math.random() * 0.8,
         waveAmp: 6 + Math.random() * 12,
-        opacity: 0.15,
-        targetOpacity: 0.15,
+        opacity: 0.22,
+        targetOpacity: 0.22,
         pulsePosition: Math.random(),
         pulseSpeed: 0.0015 + Math.random() * 0.0015,
         pulseActive: true,
@@ -325,10 +325,10 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
       // Update and render trails
       trails.forEach((trail) => {
         // Calculate dynamic proximity-based target opacity
-        let targetOp = 0.15;
+        let targetOp = 0.22;
         const curStatus = statusRef.current;
         if (curStatus === "triggering") {
-          targetOp = 0.65;
+          targetOp = 0.70;
         } else if (mouse.active) {
           let minDistSq = 99999999;
           const hasPoints = trail.points.some(p => p.x !== 0 || p.y !== 0);
@@ -342,7 +342,7 @@ export function EntryExperience({ onComplete }: EntryExperienceProps) {
             if (minDistSq < 62500) { // 250 * 250
               const minDist = Math.sqrt(minDistSq);
               const proximityFactor = (250 - minDist) / 250;
-              targetOp = 0.15 + proximityFactor * 0.40;
+              targetOp = 0.22 + proximityFactor * 0.55;
             }
           }
         }
