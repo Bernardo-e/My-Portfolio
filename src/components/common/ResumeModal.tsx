@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Download, Maximize2 } from "lucide-react";
 import { cn } from "@/utils/cn";
+import LightRays from "@/components/ui/LightRays";
 
 interface ResumeModalProps {
   isOpen: boolean;
@@ -119,15 +120,30 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                   <span>View Fullscreen</span>
                 </a>
 
-                {/* Download PDF */}
-                <a
-                  href="/Bernardo_Resume.pdf"
-                  download="Bernardo_Resume.pdf"
-                  className="flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-md font-mono text-[9px] tracking-[0.2em] uppercase font-semibold hover:bg-zinc-200 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.15)]"
-                >
-                  <Download size={10} />
-                  <span>Download PDF</span>
-                </a>
+                {/* Download PDF highlighted with volumetric LightRays */}
+                <div className="relative overflow-visible group">
+                  <div className="absolute inset-0 -inset-x-8 -top-12 -bottom-4 pointer-events-none z-0">
+                    <LightRays
+                      raysOrigin="bottom-center"
+                      raysColor="#0ea5e9"
+                      raysSpeed={1.2}
+                      lightSpread={0.35}
+                      rayLength={1.4}
+                      pulsating={true}
+                      followMouse={true}
+                      mouseInfluence={0.15}
+                      className="opacity-75 scale-x-125 scale-y-110"
+                    />
+                  </div>
+                  <a
+                    href="/Bernardo_Resume.pdf"
+                    download="Bernardo_Resume.pdf"
+                    className="relative z-10 flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-md font-mono text-[9px] tracking-[0.2em] uppercase font-semibold hover:bg-zinc-200 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.25)]"
+                  >
+                    <Download size={10} />
+                    <span>Download PDF</span>
+                  </a>
+                </div>
 
                 {/* Vertical Divider */}
                 <div className="w-[1px] h-6 bg-white/15 mx-1 hidden sm:block" />
