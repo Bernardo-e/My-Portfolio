@@ -182,7 +182,7 @@ export function HighlightsSection() {
                     >
                       {item.value}
                     </h3>
-                    <p className="font-mono text-[9px] tracking-widest text-white/80 uppercase leading-normal">
+                    <p className="font-mono text-[9px] tracking-widest text-white/90 uppercase leading-normal">
                       {item.label}
                     </p>
                   </div>

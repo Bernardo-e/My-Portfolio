@@ -76,7 +76,7 @@ export function JourneySection() {
                 >
                   {/* Year badge */}
                   <div className="w-[110px] flex-shrink-0 pt-1.5">
-                    <span className="font-mono text-[11px] tracking-[0.2em] text-white/55 tabular-nums">
+                    <span className="font-mono text-[11px] tracking-[0.2em] text-white/75 tabular-nums">
                       {entry.year}
                     </span>
                   </div>
@@ -106,7 +106,7 @@ export function JourneySection() {
                           {typeLabels[entry.type]}
                         </span>
                         {entry.highlight && (
-                          <span className="font-mono text-[9px] text-white/60">
+                          <span className="font-mono text-[9px] text-white/80">
                             {entry.highlight}
                           </span>
                         )}
@@ -115,10 +115,10 @@ export function JourneySection() {
                       <h3 className="font-display font-light text-lg text-white mb-0.5">
                         {entry.role}
                       </h3>
-                      <div className="font-mono text-[10px] tracking-widest text-white/65 mb-4">
+                      <div className="font-mono text-[10px] tracking-widest text-white/85 mb-4">
                         {entry.company}&nbsp;&nbsp;·&nbsp;&nbsp;{entry.location}
                       </div>
-                      <p className="font-sans text-sm leading-relaxed text-white/70">
+                      <p className="font-sans text-sm leading-relaxed text-white/88">
                         {entry.description}
                       </p>
                     </div>

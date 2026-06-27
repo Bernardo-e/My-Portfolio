@@ -173,7 +173,7 @@ export function AchievementsSection() {
                       <span className="font-mono text-[8px] tracking-[0.25em] uppercase text-white/80">
                         {item.category}
                       </span>
-                      <span className="font-mono text-[9px] text-white/65">
+                      <span className="font-mono text-[9px] text-white/85">
                         {item.date}
                       </span>
                     </div>
@@ -181,7 +181,7 @@ export function AchievementsSection() {
                     <h3 className="font-display font-light text-xl text-white">
                       {item.title}
                     </h3>
-                    <p className="font-sans text-sm leading-relaxed text-white/80">
+                    <p className="font-sans text-sm leading-relaxed text-white/90">
                       {item.description}
                     </p>
                   </div>

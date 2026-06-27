@@ -207,7 +207,7 @@ export function ProcessSection() {
                 >
                   <div className="flex gap-6 items-center">
                     {/* Step ID */}
-                    <span className="font-mono text-xs text-white/50 select-none">
+                    <span className="font-mono text-xs text-white/75 select-none">
                       {step.number}
                     </span>
 
@@ -226,7 +226,7 @@ export function ProcessSection() {
                       <h3 className="font-display font-light text-lg text-white">
                         {step.title}
                       </h3>
-                      <p className="font-sans text-sm text-white/70 max-w-2xl leading-relaxed">
+                      <p className="font-sans text-sm text-white/88 max-w-2xl leading-relaxed">
                         {step.description}
                       </p>
                     </div>

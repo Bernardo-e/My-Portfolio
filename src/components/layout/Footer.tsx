@@ -13,20 +13,20 @@ export function Footer() {
       <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
         {/* Left Side: Signature */}
         <div className="flex flex-col items-center md:items-start gap-2">
-          <span className="font-display font-light text-sm tracking-widest text-white/70">
+          <span className="font-display font-light text-sm tracking-widest text-white/90">
             DESIGNED & DEVELOPED BY BERNARDO
           </span>
-          <span className="font-mono text-[9px] tracking-widest text-white/55 uppercase">
+          <span className="font-mono text-[9px] tracking-widest text-white/75 uppercase">
             Copyright © 2026 Bernardo. All Rights Reserved.
           </span>
         </div>
 
         {/* Right Side: Stack Info */}
         <div className="flex flex-col items-center md:items-end gap-2 text-center md:text-right">
-          <span className="font-mono text-[8px] tracking-[0.25em] text-white/60 uppercase">
+          <span className="font-mono text-[8px] tracking-[0.25em] text-white/80 uppercase">
             Built with precision using
           </span>
-          <span className="font-sans text-[11px] text-white/75 max-w-[280px] leading-relaxed">
+          <span className="font-sans text-[11px] text-white/90 max-w-[280px] leading-relaxed">
             Next.js · TypeScript · Tailwind CSS · GSAP · Framer Motion · ReactBits
           </span>
         </div>
